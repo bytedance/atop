@@ -391,6 +391,8 @@ void do_almostcrit(char *, char *);
 void do_atopsarflags(char *, char *);
 void do_pacctdir(char *, char *);
 void do_perfevents(char *, char *);
+void do_recordcputop(char *, char *);
+void do_recordmemtop(char *, char *);
 
 static struct {
 	char	*tag;
@@ -439,6 +441,8 @@ static struct {
 	{	"almostcrit",		do_almostcrit,		0, },
 	{	"atopsarflags",		do_atopsarflags,	0, },
 	{	"perfevents",		do_perfevents,		0, },
+	{	"recordcputop",		do_recordcputop,		0, },
+	{	"recordmemtop",		do_recordmemtop,		0, },
 	{	"pacctdir",		do_pacctdir,		1, },
 };
 
