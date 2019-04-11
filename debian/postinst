@@ -6,29 +6,15 @@ case "$1" in
     configure)
         LOGDIR="/var/log/atop"
         touch $LOGDIR/dummy_after $LOGDIR/dummy_before
+        DATE="$(date +%Y%m%d)"
         # check whether atop will read its own latest file
         # point atop to the latest file and check for output on stdout
         # the pipe will prevent atop from going interactive, and if it
         # won't read the file, stdout will be empty.
-        LATESTFILE="$(ls -t $LOGDIR/atop_* 2>/dev/null | head -n 1)"
-        if [ -n "$LATESTFILE" ]; then
+        if ls -t $LOGDIR/atop_${DATE} > /dev/null 2>&1; then
+            LATESTFILE="/var/log/atop/atop_${DATE}"
             if ! atop -r $LATESTFILE 2>/dev/null | head -n 5 | grep -q '.'; then
-                # updating from an older version which won't read
-                # the old log file format
-                # take a backup of the old file and convert it
-                mv ${LATESTFILE} ${LATESTFILE}_oldformat
-                if [ -e "${LATESTFILE}_oldformat" ]; then
-                    atopconvert ${LATESTFILE}_oldformat ${LATESTFILE} >/dev/null
-                    if ! atop -r $LATESTFILE 2>/dev/null | head -n 5 | grep -q '.'; then
-                        # we still have an error
-                        echo >&2 "atop postinst: error converting ${LATESTFILE} to new atop raw file format"
-                        exit 1
-                    fi
-                else
-                    # unable to take backup of file
-                    echo >&2 "atop postinst: error backing up ${LATESTFILE} for conversion to new atop raw file format"
-                    exit 1
-                fi
+                mv "/var/log/atop/atop_${DATE}" "/var/log/atop/atop_${DATE}_old"
             fi
         fi
     ;;
