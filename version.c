@@ -13,8 +13,11 @@ getstrvers(void)
 	static char vers[256];
 
 	snprintf(vers, sizeof vers,
-		"Version: %s - %s     <gerlof.langeveld@atoptool.nl>",
-		atopversion, atopdate);
+		"Version: %s - %s     <gerlof.langeveld@atoptool.nl>%s%s%s",
+		atopversion, atopdate,
+		"\nMaintained by Bytedance. Contact:\n",
+		"\t\t\t\t\t<pizhenwei@bytedance.com>\n",
+		"\t\t\t\t\t<lifei.shirley@bytedance.com>");
 
 	return vers;
 }
