@@ -286,8 +286,8 @@ ssize_t json_unix_sock_write(int conn_fd, char *buf, int len)
 */
 
 char
-jsonout(time_t curtime, int numsecs,
-         struct devtstat *devtstat, struct sstat *sstat,
+jsonout(time_t curtime, int numsecs, struct devtstat *devtstat,
+         struct devtstat *filtertstat, struct sstat *sstat,
          int nexit, unsigned int noverflow, char flag)
 {
 	register int	i;
@@ -332,8 +332,8 @@ jsonout(time_t curtime, int numsecs,
 		snprintf(header, sizeof header, "\"%s\"",
 			labeldef[i].label);
 		/* call all print-functions */
-		if ( (labeldef[i].prifunc)(header, sstat, devtstat->taskall,
-				      devtstat->ntaskall, conn_fd) < 0 ) {
+		if ( (labeldef[i].prifunc)(header, sstat, filtertstat->taskall,
+				      filtertstat->ntaskall, conn_fd) < 0 ) {
 			json_unix_sock(-1);
 			break;
 		}

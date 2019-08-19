@@ -222,8 +222,8 @@ parsedef(char *pd)
 ** produce parseable output for an interval
 */
 char
-parseout(time_t curtime, int numsecs,
-         struct devtstat *devtstat, struct sstat *sstat,
+parseout(time_t curtime, int numsecs, struct devtstat *devtstat,
+         struct devtstat *filtertstat, struct sstat *sstat,
          int nexit, unsigned int noverflow, char flag)
 {
 	register int	i;

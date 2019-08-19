@@ -298,7 +298,7 @@
 #include "json.h"
 #include "gpucom.h"
 
-#define	allflags  "ab:cde:fghijklmnopqrstuvwxyz1ABCDEFGHIJKL:MNO:P:QRSTUVWXYZ"
+#define	allflags  "ab:cde:fghijklmnopqrstuvwxyz1ABCDEFGH:IJKL:MNO:P:QRSTUVWXYZ"
 #define	MAXFL		64      /* maximum number of command-line flags  */
 
 /*
@@ -313,6 +313,7 @@ unsigned long 	sampcnt;
 char		screen;
 int		linelen  = 80;
 int		generations = 28; /* By default, keep recent 30 days' log */
+int		threadmax  = 0;
 char		acctreason;	/* accounting not active (return val) 	*/
 char		rawname[RAWNAMESZ];
 char		rawreadflag;
@@ -609,6 +610,13 @@ main(int argc, char *argv[])
 				linelen = atoi(optarg);
 				break;
 
+                           case 'H':		/* limit output of threads    */
+				if ( !numeric(optarg) )
+					prusage(argv[0]);
+
+				threadmax = atoi(optarg);
+				break;
+
                            case MALLPROC:	/* all processes per sample ? */
 				deviatonly = 0;
 				break;
@@ -783,6 +791,7 @@ engine(void)
 	struct tstat		*curpexit;	/* exited process list	     */
 
 	static struct devtstat	devtstat;	/* deviation info	     */
+	struct devtstat *filtertstat;
 
 	unsigned long		ntaskpres;	/* number of tasks present   */
 	unsigned long		nprocexit;	/* number of exited procs    */
@@ -1037,13 +1046,16 @@ engine(void)
 		deviattask(curtpres,  ntaskpres, curpexit,  nprocexit,
 		                      &devtstat, devsstat);
 
+		/* let's filter devtstat's procall and taskall */
+		filtertstat = filter_devtstat(&devtstat);
+
 		/*
 		** activate the installed print-function to visualize
 		** the deviations
 		*/
 		lastcmd = (vis.show_samp)( curtime,
 				     curtime-pretime > 0 ? curtime-pretime : 1,
-		           	     &devtstat, devsstat, 
+		                     &devtstat, filtertstat, devsstat,
 		                     nprocexit, noverflow, sampcnt==0);
 
 		/*
@@ -1053,8 +1065,13 @@ engine(void)
 		if (vis.show_samp_secondary)
 			(vis.show_samp_secondary)(curtime,
 		                     curtime-pretime > 0 ? curtime-pretime : 1,
-		                     &devtstat, devsstat,
+		                     &devtstat, filtertstat, devsstat,
 		                     nprocexit, noverflow, sampcnt==0);
+
+		if (filtertstat != &devtstat) {
+			free(filtertstat->taskall);
+			free(filtertstat);
+		}
 
 		/*
 		** release dynamically allocated memory

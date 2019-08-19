@@ -62,9 +62,11 @@ struct netpertask;
 
 struct visualize {
 	char	(*show_samp)  (time_t, int,
+	                       struct devtstat *,
 	                       struct devtstat *, struct sstat *,
 	                       int, unsigned int, char);
 	char	(*show_samp_secondary) (time_t, int,
+	                                struct devtstat *,
 	                                struct devtstat *, struct sstat *,
 	                                int, unsigned int, char);
 	void	(*show_error) (const char *, ...);
@@ -83,6 +85,7 @@ extern unsigned long    interval;
 extern unsigned long	sampcnt;
 extern char      	screen;
 extern int      	linelen;
+extern int      	threadmax;
 extern char      	acctreason;
 extern char		deviatonly;
 extern char		usecolors;
@@ -133,7 +136,7 @@ extern int		almostcrit;
 /*
 ** structure containing the start-addresses of functions for visualization
 */
-char		generic_samp (time_t, int,
+char		generic_samp (time_t, int, struct devtstat *,
 		            struct devtstat *, struct sstat *,
 		            int, unsigned int, char);
 void		generic_error(const char *, ...);
@@ -174,9 +177,10 @@ int		nfsmcompar(const void *, const void *);
 int		contcompar(const void *, const void *);
 
 int  		rawread(void);
-char		rawwrite (time_t, int,
+char		rawwrite (time_t, int, struct devtstat *,
 		            struct devtstat *, struct sstat *,
 		            int, unsigned int, char);
+struct devtstat	*filter_devtstat(struct devtstat *);
 
 int 		numeric(char *);
 void		getalarm(int);

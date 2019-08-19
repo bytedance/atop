@@ -67,114 +67,13 @@ extern int	get_posval(char *name, char *val);
 static void	try_drop_pagecache(int, off_t, off_t);
 static void	onexit_pagecache(int, void*);
 
-static int  recordcputop = -1;
-static int  recordmemtop = -1;
-
-void
-do_recordcputop(char *name, char *val)
-{
-	recordcputop = get_posval(name, val);
-}
-
-void
-do_recordmemtop(char *name, char *val)
-{
-	recordmemtop = get_posval(name, val);
-}
-
-static int
-compint(const void *value1, const void *value2)
-{
-	return *(int*)value1 - *(int*)value2;
-}
-
-struct devtstat *
-devstat_filter_topn(struct devtstat *devtstat)
-{
-	int *cpu_top_list = NULL, *mem_top_list = NULL;
-	struct devtstat *tstat = devtstat;
-	int i = 0;
-
-	/* get cpu topN pid list */
-	if (recordcputop > 0)
-	{
-		if (recordcputop > devtstat->nprocall)
-			return devtstat;
-
-		cpu_top_list = (int *)malloc(sizeof(int) * recordcputop);
-		ptrverify(cpu_top_list, "Malloc failed for sorting cpu topN");
-
-		qsort(devtstat->procall, devtstat->nprocall, sizeof(struct tstat *),
-				compcpu);
-
-		for (i = 0; i < recordcputop; i++)
-			cpu_top_list[i] = devtstat->procall[i]->gen.tgid;
-
-		qsort(cpu_top_list, recordcputop, sizeof(int), compint);
-	}
-
-	/* get mem topN pid list */
-	if (recordmemtop > 0)
-	{
-		if (recordmemtop > devtstat->nprocall)
-			return devtstat;
-
-		mem_top_list = (int *)malloc(sizeof(int) * recordmemtop);
-		ptrverify(mem_top_list, "Malloc failed for sorting mem topN");
-
-		qsort(devtstat->procall, devtstat->nprocall, sizeof(struct tstat *),
-				compmem);
-
-		for (i = 0; i < recordmemtop; i++)
-			mem_top_list[i] = devtstat->procall[i]->gen.tgid;
-
-		qsort(mem_top_list, recordmemtop, sizeof(int), compint);
-	}
-
-	/* filter cpu & mem topN by pid list */
-	if ((recordcputop > 0) || (recordmemtop > 0))
-	{
-		tstat = (struct devtstat *)malloc(sizeof(struct devtstat));
-		ptrverify(tstat, "Malloc failed for sorted devtstat");
-		memcpy(tstat, devtstat, sizeof(struct devtstat));
-		tstat->ntaskall = 0;
-		tstat->taskall = (struct tstat*) malloc(devtstat->ntaskall *
-				sizeof(struct tstat));
-
-		for (i = 0; i < devtstat->ntaskall; i++)
-		{
-			int tgid = devtstat->taskall[i].gen.tgid;
-			if ((recordcputop > 0) && (cpu_top_list != NULL) &&
-				bsearch(&tgid, cpu_top_list, recordcputop, sizeof(int), compint))
-			{
-				tstat->taskall[tstat->ntaskall] = devtstat->taskall[i];
-				tstat->ntaskall++;
-				continue;
-			}
-
-			if ((recordmemtop > 0) && (mem_top_list != NULL) &&
-				bsearch(&tgid, mem_top_list, recordmemtop, sizeof(int), compint))
-			{
-				tstat->taskall[tstat->ntaskall] = devtstat->taskall[i];
-				tstat->ntaskall++;
-				continue;
-			}
-		}
-
-		free(cpu_top_list);
-		free(mem_top_list);
-	}
-
-	return tstat;
-}
-
 /*
 ** write a raw record to file
 ** (file is opened/created during the first call)
 */
 char
-rawwrite(time_t curtime, int numsecs, 
-         struct devtstat *devtstat, struct sstat *sstat,
+rawwrite(time_t curtime, int numsecs, struct devtstat *devtstat,
+         struct devtstat *filtertstat, struct sstat *sstat,
          int nexit, unsigned int noverflow, char flag)
 {
 	static int		rawfd = -1;
@@ -187,7 +86,6 @@ rawwrite(time_t curtime, int numsecs,
 	unsigned long		pcomplen = sizeof(struct tstat) *
 						devtstat->ntaskall;
 	struct iovec 		iov[3];
-	struct devtstat		*filter_devtstat;
 	static off_t		rawfd_written;
 
 	/*
@@ -216,14 +114,13 @@ rawwrite(time_t curtime, int numsecs,
 
 	testcompval(rv, "compress");
 
-	filter_devtstat = devstat_filter_topn(devtstat);
-	if (filter_devtstat != devtstat)
-		pcomplen = sizeof(struct tstat) * filter_devtstat->ntaskall;
+	if (filtertstat != devtstat)
+		pcomplen = sizeof(struct tstat) * filtertstat->ntaskall;
 	pcompbuf = malloc(pcomplen);
 
 	ptrverify(pcompbuf, "Malloc failed for compression buffer\n");
 
-	rv = compress(pcompbuf, &pcomplen, (Byte *)filter_devtstat->taskall,
+	rv = compress(pcompbuf, &pcomplen, (Byte *)filtertstat->taskall,
 						(unsigned long)pcomplen);
 
 	testcompval(rv, "compress");
@@ -236,7 +133,7 @@ rawwrite(time_t curtime, int numsecs,
 	rr.curtime	= curtime;
 	rr.interval	= numsecs;
 	rr.flags	= 0;
-	rr.ndeviat	= filter_devtstat->ntaskall;
+	rr.ndeviat	= filtertstat->ntaskall;
 	rr.nactproc	= devtstat->nprocactive;
 	rr.ntask	= devtstat->ntaskall;
 	rr.nexit	= nexit;
@@ -312,11 +209,6 @@ rawwrite(time_t curtime, int numsecs,
 	rawfd_written += rv;
 
 	free(pcompbuf);
-	if (filter_devtstat != devtstat)
-	{
-		free(filter_devtstat->taskall);
-		free(filter_devtstat);
-	}
 
 	return '\0';
 }
@@ -917,7 +809,7 @@ rawread(void)
 			{
 				lastcmd = (vis.show_samp)(rr.curtime,
 				     rr.interval,
-			             &devtstat, &sstat,
+			             &devtstat, &devtstat, &sstat,
 			             rr.nexit, rr.noverflow, flags);
 			}
 			while (!isregular &&

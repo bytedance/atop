@@ -341,8 +341,8 @@ int	startoffset;
 ** print the deviation-counters on process- and system-level
 */
 char
-generic_samp(time_t curtime, int nsecs,
-           struct devtstat *devtstat, struct sstat *sstat, 
+generic_samp(time_t curtime, int nsecs, struct devtstat *devtstat,
+           struct devtstat *filtertstat, struct sstat *sstat,
            int nexit, unsigned int noverflow, char flag)
 {
 	static int	callnr = 0;
