@@ -58,6 +58,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <time.h>
+#include <pwd.h>
 
 #include "atop.h"
 #include "photosyst.h"
@@ -1278,6 +1279,8 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 	int len = LEN_BUF;
 	char *tmp;
 	int ret = 0;
+	char ruidbuf[9], euidbuf[9];
+	struct passwd    *pwd;
 
 	if (conn_fd) {
 		char br[LEN_HP];
@@ -1303,10 +1306,21 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 			} else
 				printf(", ");
 		}
+
+		/* let's show the straightforward username instead of implicit userid */
+		if ( (pwd = getpwuid(ps->gen.ruid)) )
+			sprintf(ruidbuf, "%-8.8s", pwd->pw_name);
+		else
+			snprintf(ruidbuf, sizeof(ruidbuf), "%-8d", ps->gen.ruid);
+		if ( (pwd = getpwuid(ps->gen.euid)) )
+			sprintf(euidbuf, "%-8.8s", pwd->pw_name);
+		else
+			snprintf(euidbuf, sizeof(euidbuf), "%-8d", ps->gen.euid);
+
 		buflen = snprintf(tmp, len, "{\"pid\": %d, "
 			"\"name\": \"(%.19s)\", "
 			"\"state\": \"%c\", "
-			"\"ruid\": \"%d\", "
+			"\"ruid\": \"%s\", "
 			"\"rgid\": %d, "
 			"\"tgid\": %d, "
 			"\"nthr\": %d, "
@@ -1317,7 +1331,7 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 			"\"nthrrun\": %d, "
 			"\"nthrslpi\": %d, "
 			"\"nthrslpu\": %d, "
-			"\"euid\": \"%d\", "
+			"\"euid\": \"%s\", "
 			"\"egid\": %d, "
 			"\"elaps\": \"%ld\", "
 			"\"isproc\": \"%c\", "
@@ -1325,7 +1339,7 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 			ps->gen.pid,
 			ps->gen.name,
 			ps->gen.state,
-			ps->gen.ruid,
+			ruidbuf,
 			ps->gen.rgid,
 			ps->gen.tgid,
 			ps->gen.nthr,
@@ -1336,7 +1350,7 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 			ps->gen.nthrrun,
 			ps->gen.nthrslpi,
 			ps->gen.nthrslpu,
-			ps->gen.euid,
+			euidbuf,
 			ps->gen.egid,
 			ps->gen.elaps,
 			ps->gen.isproc ? 'y':'n',
