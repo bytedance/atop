@@ -85,12 +85,7 @@ int 	json_print_NFS();
 int 	json_print_NET();
 int 	json_print_IFB();
 
-int 	json_print_PRG();
-int 	json_print_PRC();
-int 	json_print_PRM();
-int 	json_print_PRD();
-int 	json_print_PRN();
-int 	json_print_PRE();
+int 	json_print_PRALL();
 
 /*
 ** table with possible labels and the corresponding
@@ -119,12 +114,7 @@ static struct labeldef	labeldef[] = {
 	{ "NET",	json_print_NET },
 	{ "IFB",	json_print_IFB },
 
-	{ "PRG",	json_print_PRG },
-	{ "PRC",	json_print_PRC },
-	{ "PRM",	json_print_PRM },
-	{ "PRD",	json_print_PRD },
-	{ "PRN",	json_print_PRN },
-	{ "PRE",	json_print_PRE },
+	{ "PRALL",	json_print_PRALL },
 };
 
 static int	numlabels = sizeof labeldef/sizeof(struct labeldef);
@@ -1272,7 +1262,7 @@ out:
 ** print functions for process-level statistics
 */
 int
-json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
+json_print_PRALL(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
 {
 	register int i, exitcode;
 	int buflen = 0;
@@ -1317,42 +1307,29 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 		else
 			snprintf(euidbuf, sizeof(euidbuf), "%-8d", ps->gen.euid);
 
+		/* handle PRG */
 		buflen = snprintf(tmp, len, "{\"pid\": %d, "
 			"\"name\": \"(%.19s)\", "
 			"\"state\": \"%c\", "
 			"\"ruid\": \"%s\", "
-			"\"rgid\": %d, "
 			"\"tgid\": %d, "
 			"\"nthr\": %d, "
 			"\"exitcode\": %d, "
-			"\"btime\": \"%ld\", "
 			"\"cmdline\": \"(%.30s)\", "
-			"\"ppid\": %d, "
 			"\"nthrrun\": %d, "
-			"\"nthrslpi\": %d, "
-			"\"nthrslpu\": %d, "
 			"\"euid\": \"%s\", "
-			"\"egid\": %d, "
-			"\"elaps\": \"%ld\", "
 			"\"isproc\": \"%c\", "
-			"\"cid\": \"%.19s\"}",
+			"\"cid\": \"%.19s\", ",
 			ps->gen.pid,
 			ps->gen.name,
 			ps->gen.state,
 			ruidbuf,
-			ps->gen.rgid,
 			ps->gen.tgid,
 			ps->gen.nthr,
 			exitcode,
-			ps->gen.btime,
 			ps->gen.cmdline,
-			ps->gen.ppid,
 			ps->gen.nthrrun,
-			ps->gen.nthrslpi,
-			ps->gen.nthrslpu,
 			euidbuf,
-			ps->gen.egid,
-			ps->gen.elaps,
 			ps->gen.isproc ? 'y':'n',
 			ps->gen.container[0] ? ps->gen.container:"-");
 		if (conn_fd) {
@@ -1361,109 +1338,26 @@ json_print_PRG(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 				goto out;
 		} else
 			printf("%s", tmp);
-	}
 
-	if (conn_fd)
-		ret = json_unix_sock_write(conn_fd, "]", 1);
-	else
-		printf("]");
-
-out:
-	free(tmp);
-	return ret;
-}
-
-int
-json_print_PRC(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
-{
-	register int i;
-	int buflen = 0;
-	int len = 1024;
-	char *tmp;
-	int ret = 0;
-
-	if (conn_fd) {
-		char *br = malloc(10 * sizeof(char));
-		sprintf(br, ", %s: [", hp);
-		ret = json_unix_sock_write(conn_fd, br, strlen(br));
-		free(br);
-		if (ret < 0)
-			return ret;
-	} else
-		printf(", %s: [", hp);
-
-	tmp = malloc(len * sizeof(char));
-	for (i=0; i < nact; i++, ps++) {
-		if (i > 0) {
-			if (conn_fd) {
-				ret = json_unix_sock_write(conn_fd, ", ", 2);
-				if (ret < 0)
-					goto out;
-			} else
-				printf(", ");
-		}
-		buflen = snprintf(tmp, len, "{\"pid\": %d, "
+		/* handle PRC */
+		buflen = snprintf(tmp, len,
 			"\"utime\": %lld, "
 			"\"stime\": %lld, "
 			"\"nice\": %d, "
-			"\"prio\": %d, "
-			"\"curcpu\": %d, "
-			"\"sleepavg\": %d}",
-			ps->gen.pid,
+			"\"curcpu\": %d, ",
 			ps->cpu.utime,
 			ps->cpu.stime,
 			ps->cpu.nice,
-			ps->cpu.prio,
-			ps->cpu.curcpu,
-			ps->cpu.sleepavg);
+			ps->cpu.curcpu);
 		if (conn_fd) {
 			ret = json_unix_sock_write(conn_fd, tmp, buflen);
 			if (ret < 0)
 				goto out;
 		} else
 			printf("%s", tmp);
-	}
 
-	if (conn_fd)
-		ret = json_unix_sock_write(conn_fd, "]", 1);
-	else
-		printf("]");
-
-out:
-	free(tmp);
-	return ret;
-}
-
-int
-json_print_PRM(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
-{
-	register int i;
-	int buflen = 0;
-	int len = 1024;
-	char *tmp;
-	int ret = 0;
-
-	if (conn_fd) {
-		char *br = malloc(10 * sizeof(char));
-		sprintf(br, ", %s: [", hp);
-		ret = json_unix_sock_write(conn_fd, br, strlen(br));
-		free(br);
-		if (ret < 0)
-			return ret;
-	} else
-		printf(", %s: [", hp);
-
-	tmp = malloc(len * sizeof(char));
-	for (i=0; i < nact; i++, ps++) {
-		if (i > 0) {
-			if (conn_fd) {
-				ret = json_unix_sock_write(conn_fd, ", ", 2);
-				if (ret < 0)
-					goto out;
-			} else
-				printf(", ");
-		}
-		buflen = snprintf(tmp, len, "{\"pid\": %d, "
+		/* handle PRM */
+		buflen = snprintf(tmp, len,
 			"\"vmem\": %lld, "
 			"\"rmem\": %lld, "
 			"\"vexec\": %lld, "
@@ -1474,8 +1368,7 @@ json_print_PRM(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 			"\"vlibs\": %lld, "
 			"\"vdata\": %lld, "
 			"\"vstack\": %lld, "
-			"\"pmem\": %lld}",
-			ps->gen.pid,
+			"\"pmem\": %lld, ",
 			ps->mem.vmem,
 			ps->mem.rmem,
 			ps->mem.vexec,
@@ -1494,54 +1387,14 @@ json_print_PRM(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 				goto out;
 		} else
 			printf("%s", tmp);
-	}
 
-	if (conn_fd)
-		ret = json_unix_sock_write(conn_fd, "]", 1);
-	else
-		printf("]");
-
-out:
-	free(tmp);
-	return ret;
-}
-
-int
-json_print_PRD(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
-{
-	register int i;
-	int buflen = 0;
-	int len = 1024;
-	char *tmp;
-	int ret = 0;
-
-	if (conn_fd) {
-		char *br = malloc(10 * sizeof(char));
-		sprintf(br, ", %s: [", hp);
-		ret = json_unix_sock_write(conn_fd, br, strlen(br));
-		free(br);
-		if (ret < 0)
-			return ret;
-	} else
-		printf(", %s: [", hp);
-
-	tmp = malloc(len * sizeof(char));
-	for (i = 0; i < nact; i++, ps++) {
-		if (i > 0) {
-			if (conn_fd) {
-				ret = json_unix_sock_write(conn_fd, ", ", 2);
-				if (ret < 0)
-					goto out;
-			} else
-				printf(", ");
-		}
-		buflen = snprintf(tmp, len, "{\"pid\": %d, "
+		/* handle PRD */
+		buflen = snprintf(tmp, len,
 			"\"rio\": %lld, "
 			"\"rsz\": %lld, "
 			"\"wio\": %lld, "
 			"\"wsz\": %lld, "
 			"\"cwsz\": %lld}",
-			ps->gen.pid,
 			ps->dsk.rio, ps->dsk.rsz,
 			ps->dsk.wio, ps->dsk.wsz, ps->dsk.cwsz);
 		if (conn_fd) {
@@ -1550,138 +1403,57 @@ json_print_PRD(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 				goto out;
 		} else
 			printf("%s", tmp);
-	}
 
-	if (conn_fd)
-		ret = json_unix_sock_write(conn_fd, "]", 1);
-	else
-		printf("]");
-
-out:
-	free(tmp);
-	return ret;
-}
-
-int
-json_print_PRN(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
-{
-	if ( !(supportflags & NETATOP) )
-		return 0;
-
-	register int i;
-	int buflen = 0;
-	int len = 1024;
-	char *tmp;
-	int ret = 0;
-
-	if (conn_fd) {
-		char *br = malloc(10 * sizeof(char));
-		sprintf(br, ", %s: [", hp);
-		ret = json_unix_sock_write(conn_fd, br, strlen(br));
-		free(br);
-		if (ret < 0)
-			return ret;
-	} else
-		printf(", %s: [", hp);
-
-	tmp = malloc(len * sizeof(char));
-	for (i = 0; i < nact; i++, ps++) {
-		if (i > 0) {
+		/* handle PRN */
+		if (supportflags & NETATOP) {
+			buflen = snprintf(tmp, len, "{\"pid\": %d, "
+				"\"tcpsnd\": \"%lld\", "
+				"\"tcpssz\": \"%lld\", "
+				"\"tcprcv\": \"%lld\", "
+				"\"tcprsz\": \"%lld\", "
+				"\"udpsnd\": \"%lld\", "
+				"\"udpssz\": \"%lld\", "
+				"\"udprcv\": \"%lld\", "
+				"\"udprsz\": \"%lld\"}",
+				ps->gen.pid,
+				ps->net.tcpsnd, ps->net.tcpssz,
+				ps->net.tcprcv, ps->net.tcprsz,
+				ps->net.udpsnd, ps->net.udpssz,
+				ps->net.udprcv, ps->net.udprsz);
 			if (conn_fd) {
-				ret = json_unix_sock_write(conn_fd, ", ", 2);
+				ret = json_unix_sock_write(conn_fd, tmp, buflen);
 				if (ret < 0)
 					goto out;
 			} else
-				printf(", ");
+				printf("%s", tmp);
 		}
-		buflen = snprintf(tmp, len, "{\"pid\": %d, "
-			"\"tcpsnd\": \"%lld\", "
-			"\"tcpssz\": \"%lld\", "
-			"\"tcprcv\": \"%lld\", "
-			"\"tcprsz\": \"%lld\", "
-			"\"udpsnd\": \"%lld\", "
-			"\"udpssz\": \"%lld\", "
-			"\"udprcv\": \"%lld\", "
-			"\"udprsz\": \"%lld\"}",
-			ps->gen.pid,
-			ps->net.tcpsnd, ps->net.tcpssz,
-			ps->net.tcprcv, ps->net.tcprsz,
-			ps->net.udpsnd, ps->net.udpssz,
-			ps->net.udprcv, ps->net.udprsz);
-		if (conn_fd) {
-			ret = json_unix_sock_write(conn_fd, tmp, buflen);
-			if (ret < 0)
-				goto out;
-		} else
-			printf("%s", tmp);
-	}
 
-	if (conn_fd)
-		ret = json_unix_sock_write(conn_fd, "]", 1);
-	else
-		printf("]");
-
-out:
-	free(tmp);
-	return ret;
-}
-
-int
-json_print_PRE(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
-{
-	if ( !(supportflags & GPUSTAT) )
-		return 0;
-
-	register int i;
-	int buflen = 0;
-	int len = 1024;
-	char *tmp;
-	int ret = 0;
-
-	if (conn_fd) {
-		char *br = malloc(10 * sizeof(char));
-		sprintf(br, ", %s: [", hp);
-		ret = json_unix_sock_write(conn_fd, br, strlen(br));
-		free(br);
-		if (ret < 0)
-			return ret;
-	} else
-		printf(", %s: [", hp);
-
-	tmp = malloc(len * sizeof(char));
-	for (i=0; i < nact; i++, ps++) {
-		if (i > 0) {
+		/* handle PRE */
+		if (supportflags & GPUSTAT) {
+			buflen = snprintf(tmp, len,
+				"\"gpustate\": \"%c\", "
+				"\"nrgpus\": %d, "
+				"\"gpulist\": \"%x\", "
+				"\"gpubusy\": %d, "
+				"\"membusy\": %d, "
+				"\"memnow\": %lld, "
+				"\"memcum\": %lld, "
+				"\"sample\": %lld}",
+				ps->gpu.state == '\0' ? 'N':ps->gpu.state,
+				ps->gpu.nrgpus,
+				ps->gpu.gpulist,
+				ps->gpu.gpubusy,
+				ps->gpu.membusy,
+				ps->gpu.memnow,
+				ps->gpu.memcum,
+				ps->gpu.sample);
 			if (conn_fd) {
-				ret = json_unix_sock_write(conn_fd, ", ", 2);
+				ret = json_unix_sock_write(conn_fd, tmp, buflen);
 				if (ret < 0)
 					goto out;
 			} else
-				printf(", ");
+				printf("%s", tmp);
 		}
-		buflen = snprintf(tmp, len, "{\"pid\": %d, "
-			"\"gpustate\": \"%c\", "
-			"\"nrgpus\": %d, "
-			"\"gpulist\": \"%x\", "
-			"\"gpubusy\": %d, "
-			"\"membusy\": %d, "
-			"\"memnow\": %lld, "
-			"\"memcum\": %lld, "
-			"\"sample\": %lld}",
-			ps->gen.pid,
-			ps->gpu.state == '\0' ? 'N':ps->gpu.state,
-			ps->gpu.nrgpus,
-			ps->gpu.gpulist,
-			ps->gpu.gpubusy,
-			ps->gpu.membusy,
-			ps->gpu.memnow,
-			ps->gpu.memcum,
-			ps->gpu.sample);
-		if (conn_fd) {
-			ret = json_unix_sock_write(conn_fd, tmp, buflen);
-			if (ret < 0)
-				goto out;
-		} else
-			printf("%s", tmp);
 	}
 
 	if (conn_fd)
