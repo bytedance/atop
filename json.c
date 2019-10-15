@@ -294,7 +294,6 @@ jsonout(time_t curtime, int numsecs,
 	char		datestr[32], timestr[32], header[256], general[256];
 	int buflen = 0;
 	int conn_fd = 0;
-	struct tstat *tmp = devtstat->taskall;
 
 	convdate(curtime, datestr);
 	convtime(curtime, timestr);
@@ -320,16 +319,6 @@ jsonout(time_t curtime, int numsecs,
 
 		if (json_unix_sock_write(conn_fd, general, buflen) < 0)
 			return '\0';
-
-		/* Replace " with # in case json can not parse this out */
-		for (int k = 0; k < devtstat->ntaskall; k++, tmp++) {
-			for (int j = 0; j < strlen(tmp->gen.name); j++)
-				if (tmp->gen.name[j] == '\"')
-					tmp->gen.name[j] = '#';
-			for (int j = 0; j < strlen(tmp->gen.cmdline); j++)
-				if (tmp->gen.cmdline[j] == '\"')
-					tmp->gen.cmdline[j] = '#';
-		}
 	} else {
 		fprintf(stderr, "unknow json output path\n");
 		return '\0';
@@ -1264,7 +1253,7 @@ out:
 int
 json_print_PRALL(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
 {
-	register int i, exitcode;
+	register int i, j, exitcode;
 	int buflen = 0;
 	int len = LEN_BUF;
 	char *tmp;
@@ -1306,6 +1295,14 @@ json_print_PRALL(char *hp, struct sstat *ss, struct tstat *ps, int nact, int con
 			sprintf(euidbuf, "%-8.8s", pwd->pw_name);
 		else
 			snprintf(euidbuf, sizeof(euidbuf), "%-8d", ps->gen.euid);
+
+		/* Replace " with # in case json can not parse this out */
+		for (j = 0; j < strlen(ps->gen.name); j++)
+			if (ps->gen.name[j] == '\"')
+				ps->gen.name[j] = '#';
+		for (j = 0; j < strlen(ps->gen.cmdline); j++)
+			if (ps->gen.cmdline[j] == '\"')
+				ps->gen.cmdline[j] = '#';
 
 		/* handle PRG */
 		buflen = snprintf(tmp, len, "{\"pid\": %d, "
