@@ -1272,6 +1272,9 @@ json_print_PRALL(char *hp, struct sstat *ss, struct tstat *ps, int nact, int con
 
 	tmp = malloc(len * sizeof(char));
 	for (i=0; i < nact; i++, ps++) {
+		if (ps->gen.tgid == ps->gen.pid && !ps->gen.isproc)
+			continue;
+
 		if (ps->gen.excode & 0xff)      // killed by signal?
 			exitcode = (ps->gen.excode & 0x7f) + 256;
 		else
