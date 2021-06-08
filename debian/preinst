@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+if [ -f /usr/bin/atop ]; then
+    VER=`/usr/bin/atop -V | grep Version | awk '{print $2}'`
+    VER24="2.4"
+    if [[ $VER =~ $VER24 ]]; then
+        cp /usr/bin/atop /usr/bin/atop-2.4
+    fi
+fi
+if [ -d /etc/logrotate.d ]; then
+    rm -f /etc/logrotate.d/psaccs_atop || exit $?
+    rm -f /etc/logrotate.d/psaccu_atop || exit $?
+fi
+# For versions >= 2.6.1, we use systemd-timer instead of cron
+if [ -d /run/systemd/system ] && [ -n "/etc/cron.d/atop" ]; then
+    rm -rf /etc/cron.d/atop* || exit $?
+    rm -rf /var/log/atop/dummy_* || exit $?
+fi

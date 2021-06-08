@@ -3,14 +3,18 @@ Description=Atop advanced performance monitor
 Documentation=man:atop(1)
 
 [Service]
-Environment="LOGOPTS="
-Environment="LOGINTERVAL=600"
-Environment="LOGGENERATIONS=28"
 Environment="LOGPATH=/var/log/atop"
+Environment="ORIGLOG=${LOGPATH}/atop_$(date +%%Y%%m%%d)"
+Environment="ATOPRC=/etc/atoprc"
+Environment="CURHMS=$(date +%%T)"
 EnvironmentFile=/etc/default/atop
+ExecStartPre=/bin/sh -c 'test -d "${ORIGLOG}" || mkdir -p ${LOGPATH}'
 ExecStartPre=/bin/sh -c 'test -n "$LOGINTERVAL" -a "$LOGINTERVAL" -eq "$LOGINTERVAL"'
 ExecStartPre=/bin/sh -c 'test -n "$LOGGENERATIONS" -a "$LOGGENERATIONS" -eq "$LOGGENERATIONS"'
-ExecStart=/bin/sh -c 'exec /usr/bin/atop ${LOGOPTS} -w "${LOGPATH}/atop_$(date +%%Y%%m%%d)" ${LOGINTERVAL}'
+ExecStartPre=/bin/sh -c 'if [ -e "${ORIGLOG}" ];then mv "${ORIGLOG}" "${ORIGLOG}_until${CURHMS}";fi'
+ExecStart=/bin/sh -c 'exec /usr/bin/atop ${LOGOPTS} -H ${THREADMAX} -O unixsock -w ${ORIGLOG} ${LOGINTERVAL}'
+ExecStartPost=/bin/sh -c 'if [ -f $ATOPRC ]; then RCGENERATIONS=`cat /etc/atoprc | grep generation -m 1 | sed "s/^.* \\(".*"$\\)/\\1/"`;if [ -n "$RCGENERATIONS" ]; then LOGGENERATIONS=$RCGENERATIONS;fi;fi'
+ExecStartPost=/bin/sh -c 'if [ -f $ATOPRC ]; then RCLOGPATH=`cat /etc/atoprc | grep logpath -m 1 | sed "s/^.* \\(".*"$\\)/\\1/"`;if [ -n "$RCLOGPATH" ]; then LOGPATH=$RCLOGPATH;fi;fi'
 ExecStartPost=/usr/bin/find "${LOGPATH}" -name "atop_*" -mtime +${LOGGENERATIONS} -exec rm -v {} \;
 KillSignal=SIGUSR2
 

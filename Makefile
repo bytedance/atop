@@ -65,10 +65,18 @@ systemdinstall:	genericinstall
 		if [ ! -d $(DESTDIR)$(PMPATHD) ]; 			\
 		then	mkdir -p $(DESTDIR)$(PMPATHD); fi
 		#
+		cp atop.service        $(DESTDIR)$(SYSDPATH)
+		chmod 0644             $(DESTDIR)$(SYSDPATH)/atop.service
+		#cp atopgpu.service     $(DESTDIR)$(SYSDPATH)
+		#chmod 0644             $(DESTDIR)$(SYSDPATH)/atopgpu.service
 		cp atop-rotate.service $(DESTDIR)$(SYSDPATH)
 		chmod 0644             $(DESTDIR)$(SYSDPATH)/atop-rotate.service
 		cp atop-rotate.timer   $(DESTDIR)$(SYSDPATH)
 		chmod 0644             $(DESTDIR)$(SYSDPATH)/atop-rotate.timer
+		cp atopacct.service    $(DESTDIR)$(SYSDPATH)
+		chmod 0644             $(DESTDIR)$(SYSDPATH)/atopacct.service
+		cp atop.default        $(DESTDIR)$(DEFPATH)/atop
+		chmod 644              $(DESTDIR)$(DEFPATH)/atop
 		cp atop-pm.sh          $(DESTDIR)$(PMPATHD)/atop-pm
 		chmod 0711             $(DESTDIR)$(PMPATHD)/atop-pm
 		#
@@ -94,10 +102,11 @@ sysvinstall:	genericinstall
 		then	mkdir -p $(DESTDIR)$(ROTPATH);	fi
 		#
 		cp atop.cronsysv  $(DESTDIR)$(CRNPATH)/atop
-		cp atop.daily     $(DESTDIR)$(SCRPATH)
-		chmod 0711        $(DESTDIR)$(SCRPATH)/atop.daily
 		cp psaccs_atop    $(DESTDIR)$(ROTPATH)/psaccs_atop
 		cp psaccu_atop    $(DESTDIR)$(ROTPATH)/psaccu_atop
+		# Don't create dummy files in log dir on package build
+		#touch             $(DESTDIR)$(LOGPATH)/dummy_before
+		#touch             $(DESTDIR)$(LOGPATH)/dummy_after
 		#
 		if [   -d $(DESTDIR)$(PMPATH1) ]; 			\
 		then	cp 45atoppm $(DESTDIR)$(PMPATH1); 		\

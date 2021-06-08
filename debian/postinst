@@ -5,7 +5,9 @@ set -e
 case "$1" in
     configure)
         LOGDIR="/var/log/atop"
-        touch $LOGDIR/dummy_after $LOGDIR/dummy_before
+        if [ ! -d "/run/systemd/system" ];then
+            touch $LOGDIR/dummy_after $LOGDIR/dummy_before
+        fi
         DATE="$(date +%Y%m%d)"
         # check whether atop will read its own latest file
         # point atop to the latest file and check for output on stdout

@@ -1,7 +1,4 @@
-# /etc/default/atop
-# see man atoprc for more possibilities to configure atop execution
-
-LOGOPTS="-R"
-LOGINTERVAL=600
-LOGGENERATIONS=28
-
+LOGOPTS="-a"
+LOGINTERVAL=10
+LOGGENERATIONS=5
+THREADMAX=100
