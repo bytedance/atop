@@ -3,16 +3,19 @@
     missingok
     daily
     rotate 0
+    nomail
+    nocompress
     ifempty
     create 0600 root root
     postrotate
 	# check if process accounting is installed
 	#
-	if [ -e /etc/logrotate.d/psacct ]
-	then
+ 	if grep -q 'savelog' /etc/cron.daily/acct 2>/dev/null; then
 	    # check if process accounting is actually in use
 	    #
-	    ACCTFILE=`awk '$2 == "{" {print $1}' /etc/logrotate.d/psacct`
+	    # this is a heuristic that will fail once acct's cron.daily job changes
+	    # please file a bug report against atop if you encounter this
+            ACCTFILE=$(sed -n "/savelog[^\/]\+\(\/[[:alnum:]\/]\+\).*/{s//\1/;p;q;}" /etc/cron.daily/acct)
 
 	    if [ -f "$ACCTFILE" ]
 	    then
@@ -24,7 +27,7 @@
 	            # stop atop daemon before accounting file
 	            # is rotated
 	            #
-	            PIDFILE=/var/run/atop.pid
+	            PIDFILE=/run/atop.pid
 
 	            if [ -e $PIDFILE ] && \
 	                   ps -p `cat $PIDFILE` | grep 'atop$' > /dev/null

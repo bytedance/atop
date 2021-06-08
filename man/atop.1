@@ -162,11 +162,14 @@ daemon is not active,
 verifies if the process accounting mechanism has been switched on
 via the separate
 .B psacct
-package. In that case, the file
-.B /var/account/pacct
-is in use as process accounting file and 
+package. In that case, the files
+.B /var/account/pacct,
+.B /var/log/account/pacct
+and
+.B /var/log/pacct
+are considered to be in use as process accounting file and
 .I atop
-opens this file for reading.
+opens the respective file for reading.
 .PP
 .TP 4
 4.
@@ -2525,7 +2528,7 @@ output about the CPU utilization:
 .SH FILES
 .PP
 .TP 5
-.B /var/run/pacct_shadow.d/
+.B /run/pacct_shadow.d/
 Directory containing the process accounting shadow files that are
 used by
 .I atop
@@ -2584,7 +2587,7 @@ All binary system and process level data in this file has been stored
 in compressed format. 
 .PP
 .TP 5
-.BI /var/run/netatop.log
+.BI /run/netatop.log
 File that contains the netpertask structs containing the network
 counters of exited processes. These structs are written by the
 .I netatopd

@@ -3,14 +3,16 @@
     missingok
     daily
     rotate 0
+    nomail
+    nocompress
     ifempty
     create 0600 root root
     postrotate
-	if [ -e /etc/logrotate.d/psacct ]
+	if grep -q 'savelog.*/var/log/account/pacct' /etc/cron.daily/acct 2>/dev/null
 	then
 	    # if the atop daemon does not run, restart it after
 	    # accounting file is rotated
-	    PIDFILE=/var/run/atop.pid
+	    PIDFILE=/run/atop.pid
 
 	    if [ -e $PIDFILE ] && \
 			ps -p `cat $PIDFILE` | grep 'atop$' > /dev/null

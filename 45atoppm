@@ -4,7 +4,7 @@
 
 LOGPATH=/var/log/atop
 BINPATH=/usr/bin
-PIDFILE=/var/run/atop.pid
+PIDFILE=/run/atop.pid
 INTERVAL=600		# interval 10 minutes
 CURDAY=`date +%Y%m%d`	# current date in same format
 

@@ -35,7 +35,7 @@
 /*
 ** name of the PID file
 */
-#define	PIDFILE		"/var/run/atopacctd.pid"
+#define	PIDFILE		"/run/atopacctd.pid"
 
 /*
 ** directory containing the source accounting file and
@@ -43,7 +43,7 @@
 ** this directory can be overruled by a command line parameter (atopacctd)
 ** or by a keyword in the /etc/atoprc file (atop)
 */
-#define	PACCTDIR	"/var/run"
+#define	PACCTDIR	"/run"
 
 /*
 ** accounting file (source file to which kernel writes records)

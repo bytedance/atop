@@ -70,7 +70,7 @@ any more. As soon as at least one client is activate again, the
 daemon continues writing shadow files.
 .PP
 The directory
-.B /var/run
+.B /run
 is used as the default topdirectory.
 Below this top-directory, the source file
 .B pacct_source
@@ -121,17 +121,17 @@ daemon.
 .SH FILES
 .PP
 .TP 5
-.B /var/run/pacct_source
+.B /run/pacct_source
 Regular file to which the kernel writes the process accounting records.
 This file will be regularly truncated.
 .PP
 .TP 5
-.B /var/run/pacct_shadow.d/current
+.B /run/pacct_shadow.d/current
 Regular file containing the sequence number of the current shadow file
 and the maximum number of records per shadow file.
 .PP
 .TP 5
-.B /var/run/pacct_shadow.d/N.paf
+.B /run/pacct_shadow.d/N.paf
 Regular files containing the process accounting records that have
 been copied transparently from the source file (N represents a 10-digit
 sequence number).

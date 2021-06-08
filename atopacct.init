@@ -7,15 +7,17 @@
 #
 ### BEGIN INIT INFO
 # Provides:             atopacct
-# Required-Start:	$local_fs
-# Required-Stop:	$local_fs
+# Required-Start:	$local_fs $remote_fs
+# Required-Stop:	$local_fs $remote_fs
 # Default-Start:	2 3 4 5
 # Default-Stop:		0 1 6
-# Short-Description: This daemon switches on process accounting and
-#                    transfers the process accounting records 'realtime'
-#                    to small shadow files to avoid huge disk space usage
-# Description: Process accounting control
+# Description:          This daemon switches on process accounting and
+#                       transfers the process accounting records 'realtime'
+#                       to small shadow files to avoid huge disk space usage
+# Short-Description:    Process accounting control
 ### END INIT INFO
+
+. /lib/lsb/init-functions
 
 # Check existance of binaries 
 [ -f /usr/sbin/atopacctd ] || exit 0
@@ -27,7 +29,7 @@ case "$1" in
   start)
 	# Check if process accounting already in use via psacct
 	#
-	for PACCTFILE in /var/account/pacct /var/log/pacct
+	for PACCTFILE in /var/account/pacct /var/log/pacct /var/log/account/pacct
 	do
 		if [ -f "$PACCTFILE" ]	# file exists?
 		then
@@ -52,11 +54,11 @@ case "$1" in
 		:
 	else
 		# Start atopacctd
-		rm -rf /var/run/pacct_shadow.d 2> /dev/null
+		rm -rf /run/pacct_shadow.d 2> /dev/null
 		/usr/sbin/atopacctd
 	fi
 
-	touch /var/lock/subsys/atopacctd
+	touch /run/lock/atopacctd
 	;;
 
   stop)
@@ -66,7 +68,7 @@ case "$1" in
 	then
 		kill $(ps -e | grep atopacctd$ | sed 's/^ *//' | cut -d' ' -f1)
 	fi
-	rm -f /var/lock/subsys/atopacctd
+	rm -f /run/lock/atopacctd
 	;;
 
   status)
@@ -75,7 +77,9 @@ case "$1" in
   reload)
 	;;
 
-  restart)
+  restart|force-reload)
+  	$0 stop
+        $0 start
 	;;
 
   *)

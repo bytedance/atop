@@ -1,10 +1,12 @@
 #!/bin/sh
 
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
 case "$1" in
-	pre)	/usr/bin/systemctl stop atop
+	pre)	systemctl stop atop
 		exit 0
 		;;
-	post)	/usr/bin/systemctl start atop
+	post)	systemctl start atop
 		exit 0
 		;;
  	*)	exit 1
