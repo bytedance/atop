@@ -1,3 +1,10 @@
+atop (2.6.0+byted1) unstable; urgency=medium
+
+  * upload to unstable
+    Refer to https://bytedance.feishu.cn/wiki/wikcnYw1TXlZivX43mZa58XllXe
+
+ -- Fei Li <lifei.shirley@bytedance.com>  Tue, 8 Jun 2021 20:53:42 +0100
+
 atop (2.6.0-2) unstable; urgency=medium
 
   * The acct coexistence patch was flawed. Improve it
