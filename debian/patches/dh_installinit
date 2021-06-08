@@ -1,0 +1,15 @@
+Description: do not install init scripts directly
+Author: Marc Haber <mh+debian-packages@zugschlus.de>
+Forwarded: via web form
+Last-Update: 2016-08-07
+--- a/Makefile
++++ b/Makefile
+@@ -92,8 +92,6 @@ sysvinstall:	genericinstall
+ 		if [ ! -d $(DESTDIR)$(ROTPATH) ]; 			\
+ 		then	mkdir -p $(DESTDIR)$(ROTPATH);	fi
+ 		#
+-		cp atop.init      $(DESTDIR)$(INIPATH)/atop
+-		cp atopacct.init  $(DESTDIR)$(INIPATH)/atopacct
+ 		cp atop.cronsysv  $(DESTDIR)$(CRNPATH)/atop
+ 		cp atop.daily     $(DESTDIR)$(SCRPATH)
+ 		chmod 0711        $(DESTDIR)$(SCRPATH)/atop.daily

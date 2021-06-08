@@ -1,0 +1,132 @@
+atop (2.4.0-2) experimental; urgency=medium
+
+  atop sometimes changes the format of the raw log files. In that case, atop
+  -r will not be able to read the files written by previous version. The
+  atopconvert(1) tool can be locally used to convert the old log files.
+  
+  In postinst, the package checks whether the new atop binary will read the
+  latest raw file and try to convert the file. All other files in /var/log/atop
+  are left unchanged.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 22 Jan 2019 09:12:57 +0100
+
+atop (2.4.0-1) unstable; urgency=medium
+
+  atop 2.4 contains methods to collect data from nVidia GPUs. That
+  feature is written in python and needs a python module that in turn
+  needs the proprietary nVidia GPU driver.
+  
+  The module is not packaged in Debian at this time, and it would not
+  be a good idea to depend on the proprietary nVidia stuff. Therefore,
+  atopgpud has been removed in the Debian package.
+  
+  If you want to help with atopgpud being packaged, please file bug
+  reports and patches.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 18 Jan 2019 18:50:06 +0100
+
+atop (2.2.6-3) unstable; urgency=medium
+
+  atop does some really weird things with logrotate, which cause
+  undocumented behavior in logrotate versions < 3.11. As Debian stretch
+  has 3.11, this should not be an issue when updating between stable
+  versions.
+  
+  If you have been using unstable or testing, and you get weird
+  messages from logrotate, it might be worth looking in /var/log/atop
+  for weird log files, and removing all dummy_* files other than
+  dummy_after and dummy_before.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 18 Jan 2017 19:39:45 +0100
+
+atop (2.2.6-2) unstable; urgency=medium
+
+  PID file /run/atopacctd.pid not readable (yet?) after start
+  
+  This is an issue when upgrading from one of the experimental atop
+  versions that have never been in Debian unstable. I therefore don't
+  consider it a bug. The issue is already reported (#842136, #849138).
+  Please don't file additional bug reports for this issue.
+  
+  Here is an explanation from upstream (quoting Gerlof with his kind
+  permission):
+  
+  |(…), I think that this caused by the fact that the previous run of
+  |atopacctd did not terminate properly. That causes the fact that
+  |files and directories are not removed by atopacctd, giving problems
+  |with the next activation.
+
+  |Obviously, it is possble to remove these files and directories
+  |*during* the next activation (instead of terminating with an error
+  |message). However, I don't want to do that since the existence of
+  |the /run/pacct_shadow.d directory might also indicate that the
+  |atopacctd daemon is already running (then a second incarnation
+  |should refuse to start).
+
+  |So when the issue is solved that atopacctd refuses to terminate (…),
+  |the issue of the existing /run/pacct_shadow.d directory should also
+  |be irrelevant IMHO.
+  
+  When atopacctd receives signal 2, 3 or 15, it finishes and destroys
+  the files/directories it has created. If you encounter the situation
+  that atopacctd does not start because it complains about pidfile
+  and/or /run/pacct_* directories/files, please send SIGTERM to any
+  atopacctd process that may still hang around, and if the
+  files/directories are still there without the corresponding atopacctd
+  process, please remove them manually and then try starting atopacctd
+  again.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 27 Dec 2016 12:00:00 +0100
+
+atop (2.2.6-2) unstable; urgency=medium
+
+  KERNEL ISSUES WITH PROCESS ACCOUNTING
+
+  Newer upstream kernels have two issues with process accounting.
+  These were isolated and debugged in #833997
+
+  1) Sometimes process accounting does not work at all¹. Atopacctd tries to
+  work around this issue, by retrying to initialize process accounting
+  several times.
+
+  2) When using the NETLINK interface, the command TASKSTATS_CMD_GET
+  consequently returns -EINVAL². Atopacctd needs NETLINK to be able to
+  be triggered that some process in the system has finished. In this way
+  atopacctd can be in a blocking state as long as no processes terminate.
+  When atopacctd detects this condition it thus switches into a polling
+  state to periodically try if it can read process accounting records as
+  a workaround. This issue has to do with cpumask and you can work-around
+  it by building a kernel that has CONFIG_NR_CPUS configured to exactly
+  the amount of CPUs (logical CPUs) in the system the kernel runs on. You
+  can find this kernel option under "Processor type and features" -->
+  "Maximum number of CPUs".
+
+  [1] Bug 190271 - process accounting sometimes does not work
+  https://bugzilla.kernel.org/show_bug.cgi?id=190271
+
+  [2] Bug 190711 - Process accounting: Using the NETLINK interface,
+  the command TASKSTATS_CMD_GET returns -EINVAL
+  https://bugzilla.kernel.org/show_bug.cgi?id=190711
+
+  Linux kernel mailing list thread:
+
+  [REGRESSION] Two issues that prevent process accounting (taskstats) from
+  working correctly
+  https://lkml.org/lkml/2016/12/19/182
+  
+  There are also Debian bug reports for those two issues, #848682 and
+  #848683
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 27 Dec 2016 12:00:00 +0100
+
+atop (2.2.3-1~exp1) experimental; urgency=low
+
+  * atop's log file format in /var/log has changed. Old log files will
+    be moved away on upgrade so that the new atop will actually start.
+  * currently the restart of atop does not work because in some
+    circumstances, atop won't read its own log file. Symptom is that
+    atop doesn't run after restart and /var/log/atop/daily.log says
+    incompatible log format. Upstream has been informed of that. I am
+    uploading to experimental to get preliminary comments from users.
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Mon, 08 Aug 2016 10:58:40 +0200

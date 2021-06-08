@@ -1,0 +1,3 @@
+debian/atop.wrapper usr/share/atop
+debian/atop.service /lib/systemd/system
+debian/atopacct.service /lib/systemd/system

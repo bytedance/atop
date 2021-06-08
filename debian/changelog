@@ -1,0 +1,442 @@
+atop (2.6.0-2) unstable; urgency=medium
+
+  * The acct coexistence patch was flawed. Improve it
+    Thanks to Joerg Dorchain (Closes: #981091)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 09 Feb 2021 15:34:09 +0100
+
+atop (2.6.0-1) unstable; urgency=medium
+
+  * New upstream version 2.6.0
+    * refresh patches
+    * adapt debian/copyright
+  * fix path to systemctl.
+    Thanks to Aaron M. Ucko (Closes: #976125)
+  * remove atopsar on debian/rules clean.
+    Thanks to Andreas Beckmann (Closes: #976125)
+  * add patch to better handle coexistence with the acct package
+    Thanks to Sergio Gelato (Closes: #922224)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 20 Jan 2021 19:33:03 +0100
+
+atop (2.5.0-1) unstable; urgency=medium
+
+  * new upstream version 2.5.0
+    * refresh patches
+    * add patch to disable defaults file handling
+  * machine readable debian/copyright
+  * watch file version 4
+  * Rules-Requires-Root
+  * debhelper compatibility level 13
+  * Standards-Version 4.5.1
+  * prevent ls warning from being printed in postinst on new install
+  * give back meaning to /etc/default/atop
+    Thanks to Thomas Arendsen Hein (Closes: #960393)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 20 Nov 2020 13:40:52 +0100
+
+atop (2.4.0-3) unstable; urgency=medium
+
+  * upload to unstable
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 25 Jan 2019 17:41:25 +0100
+
+atop (2.4.0-2) experimental; urgency=medium
+
+  * postinst: check whether atop will read the latest raw file. If not,
+    convert the file using atopconvert. Thanks to Sven Hartge (Closes: #919922)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Mon, 21 Jan 2019 11:33:16 +0100
+
+atop (2.4.0-1) unstable; urgency=medium
+
+  * New upstream version 2.4.0
+    * refresh patches
+    * disable atopgpud (needs things from non-free nVidia universe)
+    * will now build with glibc 2.28. Thanks to Adrian Bunk (Closes: #916013)
+    * will hopefully no longer crash with "Malloc failed for deviated tasks"
+      Thanks to Vincent Lefevre for staying on top of this. (Closes: #913910)
+    * now calls init script as /bin/bash explicitly. Thanks to Cristian
+      Ionescu-Idbohrn (Closes: #853166)
+    * command line options are now run-time configurable from
+      /etc/defaults/atop. This allows the owners of very big machines to
+      turn off options like -R that might affect production on such huge
+      boxes. This is mean to address #896767 without deviating from upstream's
+      default configuration. Thanks to Manuel Arostegui. This also allows
+      local setting of INTERVAL and DAYS. Thanks to Costas Drogos and Roberto
+      Suarez Soto (Closes: #861874) (Closes: #877148)
+    * now also supports NVMe SSDs. Thanks to Carsten Burkhardt and Damyan
+      Ivanov (Closes: #904638)
+    * formats process table nicely even with kernel.pid_max > 99999.
+      Thanks to Sven Hartge (Closes: #850189)
+  * fix outdated mail addresses and URLs in debian/copyright (Closes: #900487)
+  * lintian: use dh_maintscript instead of calls to dpkg-maintscript-helper
+  * split systemd switch in debian/atop.cron.d in two cron jobs to avoid
+    an incomprehensible quoting issue that might cause a cron job to stay
+    lingering around on non-systemd systems. Thanks to Arnt Karlsen
+    (Closes: #913364)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sun, 13 Jan 2019 16:04:42 +0100
+
+atop (2.3.0-1) unstable; urgency=medium
+
+  * new upstream release
+  * new git URLs
+  * Maintainer address on packages.debian.org
+  * fix Makefile to allow consecutive clean
+  * Standards-Version: 4.1.2 (no changes necessary)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sat, 30 Dec 2017 15:36:37 +0000
+
+atop (2.2.6-5) unstable; urgency=medium
+
+  * install systemd unit and initscript in dh_auto_install.
+    Thanks to Adrian Bunk and nthykier (Closes: #881479)
+  * get rid of dh-systemd dependency, bump debhelper dependency
+  * bump debhelper level to 10
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Fri, 17 Nov 2017 18:52:51 +0100
+
+atop (2.2.6-4) unstable; urgency=medium
+
+  * remove versioned dependency on initscripts. See also #852314.
+    Thanks to Stephen Kitt (Closes: 852239)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 25 Jan 2017 20:45:37 +0100
+
+atop (2.2.6-3) unstable; urgency=medium
+
+  * use nocompress in logrotate files, workaround for logrotate < 3.11.
+    Thanks to Yuri D'Elia (Closes: 851138)
+  * add reference to #848682 and #484683 to NEWS.
+    Thanks to Martin Steigerwald (Closes: 833997)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Thu, 19 Jan 2017 13:11:18 +0000
+
+atop (2.2.6-2) unstable; urgency=medium
+
+  * upload to unstable (finally)
+  * add NEWS.Debian explanation for #842136 and #849138
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 27 Dec 2016 13:01:24 +0100
+
+atop (2.2.6-1~exp1) experimental; urgency=medium
+
+  * New upstream version 2.2.6
+    * This is 2.2.5 plus a (yet unreleased) upstream change to
+      implement a polling mode in case NETLINK refuses with
+      error EINVAL, working around kernel bug 190711.
+    * 2.2.6 upstream version used in coordination with Upstream,
+      orig.tar.gz created by Debian.
+    * This hopefully takes care of installation issues.
+      Thanks to Vincent Lefevre (Closes: 848657)
+      Thanks to Yuri D'Elia (Closes: 848582)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 20 Dec 2016 10:33:24 +0100
+
+atop (2.2.5-1~exp1) experimental; urgency=medium
+
+  * New upstream version 2.2.5
+    * This cannot possibly go without saying big THANKS to Upstream.
+      Your help was great!
+    * Fix c/p Error in man atop(1).
+      Thanks to Alexandre Kieffer (Closes: #840645)
+    * Take care that atopacctd terminates upon receipt of SIGTERM
+      signal. Thanks to Vincent Lefevre (Closes: #834226)
+  * install atop-pm to /etc/systemd/system-sleep (Closes: 834039)
+  * Architecture: linux-any
+  * fix path typo in cron.d.
+    Thanks to Sam Morris (Closes: #846954)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 25 Oct 2016 10:46:20 +0200
+
+atop (2.2.4-1~exp1) experimental; urgency=medium
+
+  * New upstream version 2.2.4
+    * this is an upstream bugfix release
+    * adapt patches
+  * move "lock" files to /run/lock.
+    Thanks to Vincent Lefevre (Closes: #833955)
+  * check for systemd via /run/systemd/system.
+    Thanks to Sam Morris (Closes: #840407)
+  * set nomail in logrotate files (Closes: #833982)
+  * fix wrong URL to X-Vcs-Browser
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 10 Aug 2016 11:07:16 +0200
+
+atop (2.2.3-1~exp1) experimental; urgency=low
+
+  * New upstream version 2.2.3
+    * adapt patches
+    * fix no-version-symlinks patch
+    * add var-run patch to replace /var/run with /run
+    * create dummy files in /var/log/atop in postinst
+    * install atop.daily to /usr/share instead of /etc
+    * move away old log file if upgrading (incompatible format)
+    * unfortunately this version is not suitable for unstable since it
+      sometimes does not cleanly restart when restarted during the day
+  * init scripts:
+    * remove debian specific init script
+    * use upstream's init scripts, install them using debhelper.
+      (Closes: #730167)
+    * add dependency on $remote_fs to init scripts
+    * implement force-reload in init scripts
+    * fix swapped lsb headers (Short-Description and Description)
+    * call lsb/init-functions in init scripts
+  * systemd units
+    * use upstream's systemd units, install them using debhelper
+    * do not depend on syslog.target (lintian)
+    * put systemd unit in /lib/systemd
+    * have systemd unit start atopaccd from /usr/sbin
+  * packaging:
+    * do call both systemdinstall and sysvinstall. order matters.
+    * remove grossly outdated README.Debian and NEWS
+    * document in atop.default that the file is no longer used
+    * recommend cron | cron-daemon.
+      Thanks to Alexandre Detiste (Closes: #798233)
+    * fix project homepage in debian/control (Closes: #740359)
+    * versioned depends on initscripts (/run)
+    * Standards-Version: 3.9.8 (no changes necessary)
+    * fix watch file
+  * new Debian cron.d script (cross of upstream's two cron.d scripts)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 09 Aug 2016 20:54:27 +0200
+
+atop (1.27.3-1) experimental; urgency=low
+
+  * New upstream version 1.27.3
+    * will not exceed 50 MB of memory allocation. Closes: #575547
+  * upstream is no longer repacked
+  * refresh patches
+  * remove virtio-disks patch (applied upstream)
+  * remove patch logfiles (applied upstream)
+  * fix wrongly escaped quote in atoprc.5 man page
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Wed, 25 Jul 2012 22:17:28 +0200
+
+atop (1.26-2) unstable; urgency=low
+
+  * fix typo in bug number in changelog. Sorry, sur5r
+  * add patch to handle vd* disks as well (Closes: 640527)
+  * remove set -e from init script, /etc/init.d/skeleton doesn't have it
+  * Depend on lsb-base (>= 3.2-14) as we use log_* functions
+  * streamlinie init script with current skeleton, add default file.
+    Thanks to Vincent Lefevre (Closes: 675443)
+  * add DEP-3 headers to patches
+  * Roll back Debian patches breaking a feature:
+    * Now, only use mkstemp to create temp file
+    * Roll back Debian change: use upstream cronjob to rotate logs
+      (Closes: 611616)
+  * merge daily cron job and init script, debianize process
+  * use a wrapper to obtain correct redirection
+  * add cron to Recommends
+  * remove atop binary in clean target
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Tue, 22 May 2012 18:50:19 +0200
+
+atop (1.26-1) unstable; urgency=low
+
+  * New upstream version 1.26 (Closes: #569175)
+    * repack source: remove binary that was contained in the source package
+  * use dh level 9, source format 3.0 (quilt)
+    * roll back Makefile to original state
+    * roll /var/run patch into a quilt patch
+    * roll logfile mkstemp patch into a quilt patch
+    * add README.source
+  * disable most functions of Makefile
+    * disable process accounting (no kernel patch)
+    * don't install package's init script
+    * disable upstream's cron job
+    * disable versioned symlinks
+    * disable chkconfig call from Makefile
+  * postinst: remove path from logrotate, move DEBHELPER last, set -e
+  * new init script
+    * Thanks to Peter Eisentraut for a patch that didn't get used
+      (Closes: #529003)
+  * put proper Copyright statement in debian/copyright
+  * debian/control
+    * add ${misc:Depends}
+    * Standards-Version: 3.9.3 (no further changes necessary)
+    * versioned build dep on debhelper
+    * add Vcs-Lines
+  * Import sources to alioth/collab-maint
+  * New Maintainer (cleared with mia@qa) (Closes: #646744)
+
+ -- Marc Haber <mh+debian-packages@zugschlus.de>  Sun, 20 May 2012 21:07:13 +0000
+
+atop (1.23-1.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Fix CVE-2011-XXXX: Insecure use of a temporary files rawlog.c and
+    acctproc.c (Closes: #622794)
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Mon, 01 Aug 2011 15:35:16 +0100
+
+atop (1.23-1) unstable; urgency=low
+
+  * fixed typo (Closes: #467447)
+  * last release was built as native package
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri, 07 Mar 2008 22:07:27 +0100
+
+atop (1.23) unstable; urgency=low
+
+  * new upstream release
+  * bump standards to 3.7.3 (no changes)
+  * moved homepage from description to control field
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri, 07 Mar 2008 16:16:15 +0100
+
+atop (1.22) unstable; urgency=low
+
+  * new upstream release
+
+ -- Edelhard Becker <edelhard@debian.org>  Tue, 20 Nov 2007 17:44:47 +0100
+
+atop (1.21-1) unstable; urgency=low
+
+  * new upstream release
+  * made rules and init.d script lintian clean
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri, 31 Aug 2007 15:55:33 +0200
+
+atop (1.20-2) unstable; urgency=low
+
+  * do not install upstream's crontab file
+
+ -- Edelhard Becker <edelhard@debian.org>  Thu, 03 May 2007 00:12:59 +0200
+
+atop (1.20-1) unstable; urgency=low
+
+  * New upstream release (Closes: #411133, #372935)
+  * include upstream Changelog (Closes: #340093)
+  * bumped standards to 3.7.2
+  * applied patch to cooperate with sa from acct package, thanks Dominique
+    (Closes: #420676)
+  * restart daemon by logrotate via invoke-rc.d (Closes: #393545)
+
+ -- Edelhard Becker <edelhard@debian.org>  Wed, 02 May 2007 02:30:09 +0200
+
+atop (1.16-2) unstable; urgency=low
+
+  * depend on logrotate (Closes: #362893), thanks Tommi
+
+ -- Edelhard Becker <edelhard@debian.org>  Mon, 17 Apr 2006 15:00:20 +0200
+
+atop (1.16-1) unstable; urgency=low
+
+  * New upstream release. Most notable upstream changes:
+
+     - New line with system-level counters called PAG (paging-related counters
+       like scan, stall, swin and swout).
+     - For network-interfaces the effective line-speed in bits-per-second for
+       incoming and outgoing traffic is shown now (so Kbps/Mbps/Gbps).
+     - New function '1': show averages *per second* where applicable.
+     - Improved output that is easier to parse (fixed number of fields per
+       line).
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri,  7 Apr 2006 11:59:46 +0200
+
+atop (1.15-2) unstable; urgency=low
+
+  * remove log files on purge (Closes: #359083), thanks Justin
+
+ -- Edelhard Becker <edelhard@debian.org>  Tue, 28 Mar 2006 16:29:27 +0200
+
+atop (1.15-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Edelhard Becker <edelhard@debian.org>  Mon,  7 Nov 2005 23:08:01 +0100
+
+atop (1.14.99-1) unstable; urgency=low
+
+  * New upstream release (upcoming 1.15 preview)
+  * removed /etc/atop/ stuff (not necessary) and the corresponding section
+    from the man page
+  * removed /etc/rc.d/ stuff (not necessary)
+
+ -- Edelhard Becker <edelhard@debian.org>  Sun, 30 Oct 2005 11:56:20 +0100
+
+atop (1.14-1) unstable; urgency=low
+
+  * New upstream release
+  * added URL of the new website where appropriate (copyright, control, README
+    and watch)
+
+ -- Edelhard Becker <edelhard@debian.org>  Sat, 18 Dec 2004 14:01:42 +0100
+
+atop (1.13-1) unstable; urgency=low
+
+  * New upstream release (added recognition of thread-groups and scheduling
+    information)
+  * fixed missing options in manpage and help-screen
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri, 24 Sep 2004 11:09:04 +0200
+
+atop (1.12-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Edelhard Becker <edelhard@debian.org>  Wed,  2 Jun 2004 10:44:36 +0200
+
+atop (1.10-2) unstable; urgency=low
+
+  * changed default for raw data filename to /var/log/atop.1 to reflect the
+    Debian layout (Closes: #217387); adapted man page
+  * bumped policy to 3.6.1 (no changes needed)
+
+ -- Edelhard Becker <edelhard@debian.org>  Fri, 24 Oct 2003 14:48:11 +0200
+
+atop (1.10-1) unstable; urgency=low
+
+  * New upstream release
+  * increased storage for a number of resources to allow larger values (like
+    reported in #197626)
+  * new commands (see /usr/share/doc/atop/NEWS.Debian.gz for details)
+  * upstream replaced sys/acct.h by linux/acct.h (Closes: #198890)
+  * trailing `pidof atop` removed from init.d/atop (Closes: #199330)
+
+ -- Edelhard Becker <edelhard@debian.org>  Wed,  9 Jul 2003 15:57:14 +0200
+
+atop (1.9-6) unstable; urgency=low
+
+  * changed some 'long's to 'long long's to prevent overflows at 2GB
+    (Closes: #197626)
+  * bumped standards to 3.5.10
+
+ -- Edelhard Becker <edelhard@debian.org>  Mon, 16 Jun 2003 21:23:21 +0200
+
+atop (1.9-5) unstable; urgency=low
+
+  * changed Architecture to any (Closes: #192620)
+  * logrotate now should work - seems that atop needs more time after stopping
+    via start-stop-daemon than logrotate waits
+  * changed maintainer e-mail to my debian account
+  * force inclusion of orig.tar.gz via dpkg-buildpackage -sa
+
+ -- Edelhard Becker <edelhard@debian.org>  Mon, 26 May 2003 18:30:02 +0200
+
+atop (1.9-4) unstable; urgency=low
+
+  * improved logrotate (again)
+  * new upload should include atop-1.9.orig.tar.gz (Closes: #192344)
+
+ -- Edelhard Becker <becker@edelhard.de>  Thu,  8 May 2003 12:38:51 +0200
+
+atop (1.9-2) unstable; urgency=low
+
+  * added -oknodo to start-stop-deamon to allow smooth upgrade
+  * improved upgrade / logrotate handling
+
+ -- Edelhard Becker <becker@edelhard.de>  Fri,  2 May 2003 16:56:19 +0200
+
+atop (1.9-1) unstable; urgency=low
+
+  * Initial Release.
+  * removed atop.{daily,24hours,cron}, rely on init.d/atop instead
+  * add support for logrotate
+  * Initial upload (Closes: #190729)
+
+ -- Edelhard Becker <becker@edelhard.de>  Fri, 25 Apr 2003 14:27:39 +0200
+

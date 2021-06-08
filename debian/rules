@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -f debian/atop.service debian/atopacct.service debian/atop.init debian/atopacct.init
+	rm -f atop atopsar
+
+override_dh_installinit:
+	dh_installinit --name=atop
+	dh_installinit --name=atopacct
+
+override_dh_auto_install:
+	dh_auto_install
+	make sysvinstall DESTDIR=$(shell pwd)/debian/atop
+	make systemdinstall DESTDIR=$(shell pwd)/debian/atop
+	cp atop.service debian/atop.service
+	cp atopacct.service debian/atopacct.service
+	cp atop.init debian/atop.init
+	cp atopacct.init debian/atopacct.init

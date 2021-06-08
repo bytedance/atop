@@ -1,0 +1,28 @@
+Description: force-reload is required, and restart|force-reload should not be a no-op
+Author: Marc Haber <mh+debian-packages@zugschlus.de>
+Forwarded: via web form
+Last-Update: 2016-08-07
+--- a/atop.init
++++ b/atop.init
+@@ -71,7 +71,7 @@ case "$1" in
+ 	/usr/share/atop/atop.daily&
+ 	;;
+ 
+-  restart)
++  restart|force-reload)
+ 	/usr/share/atop/atop.daily&
+ 	;;
+ 
+--- a/atopacct.init
++++ b/atopacct.init
+@@ -77,7 +77,9 @@ case "$1" in
+   reload)
+ 	;;
+ 
+-  restart)
++  restart|force-reload)
++  	$0 stop
++        $0 start
+ 	;;
+ 
+   *)

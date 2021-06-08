@@ -1,0 +1,11 @@
+#! /bin/bash
+
+#DEBHELPER#
+
+set -e
+
+if [ "$1" = "purge" ]
+then
+	rm -rf /var/log/atop
+fi
+

@@ -1,0 +1,142 @@
+NOTE: This cannot be uploaded unless the "License: None" files
+have been cleared
+
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: atop
+Upstream-Contact: Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+Source: https://atoptool.nl/
+
+Files: *
+Copyright: Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: atopacctd.c
+Copyright: 2014 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2
+
+Files: deviate.c
+ photoproc.c
+ rawlog.c
+ showgeneric.c
+ various.c
+Copyright: 2000-2010 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: photosyst.c
+ procdbase.c
+Copyright: 2000-2012 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: atopcat.c
+Copyright: 2020 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: atopsar.c
+ ifprop.c
+ parseable.c
+Copyright: 2007-2010 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: atop.c
+Copyright: 2000-2018 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: atopconvert.c
+Copyright: 2018-2020 Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+License: GPL-2+
+
+Files: showprocs.c
+ showlinux.h
+ showsys.c
+Copyright: 2009 JC van Winkel - AT Computing, Nijmegen, Holland
+License: GPL-2+
+
+Files: showlinux.c
+Copyright: 2009-2010 JC van Winkel - AT Computing, Nijmegen, Holland
+License: GPL-2+
+
+Files: 45atoppm
+ atop.cronsysv
+ atop.daily
+ atop.default
+ atop.init
+ atop.service
+ atopacct.service
+ atopacct.init
+ atopacctd.h
+ atopgpud
+ atopgpu.service
+ atop-pm.sh
+ atop-rotate.service
+ atop-rotate.timer
+ gpucom.h
+ ifprop.h
+ Makefile
+ netatopd.h
+ netatop.h
+ netlink.c
+ netstats.h
+ parseable.h
+ versdate.h
+ version.c
+ version.h
+ prev/photoproc_20.h
+ prev/photoproc_21.h
+ prev/photoproc_22.h
+ prev/photoproc_23.h
+ prev/photoproc_24.h
+ prev/photoproc_25.h
+ prev/photoproc_26.h
+ prev/protosyst_20.h
+ prev/photosyst_21.h
+ prev/photosyst_22.h
+ prev/photosyst_23.h
+ prev/photosyst_24.h
+ prev/photosyst_25.h
+ prev/photosyst_26.h
+ psaccs_atop
+ psaccu_atop
+ rawlog.h
+ versdate.h
+ version.c
+ version.h
+License: None
+
+Files: debian/*
+Copyright: 2003 Edelhard Becker <becker@edelhard.de>
+ 2012-2020 Marc Haber <mh+debian-packages@zugschlus.de>
+License: GPL-2+
+
+License: GPL-2
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 2 of the License
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+

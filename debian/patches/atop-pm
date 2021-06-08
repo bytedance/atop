@@ -1,0 +1,43 @@
+Description: install atop-pm to /etc/systemd/system-sleep/atop-pm
+Author: Marc Haber <mh+debian-packages@zugschlus.de>
+Forwarded: no
+Last-Update: 2016-10-25
+--- a/Makefile
++++ b/Makefile
+@@ -18,7 +18,7 @@ CRNPATH  = /etc/cron.d
+ ROTPATH  = /etc/logrotate.d
+ PMPATH1  = /usr/lib/pm-utils/sleep.d
+ PMPATH2  = /usr/lib64/pm-utils/sleep.d
+-PMPATHD  = /usr/lib/systemd/system-sleep
++PMPATHD  = /lib/systemd/system-sleep
+ 
+ CFLAGS  += -O2 -I. -Wall -Wno-stringop-truncation # -DNOPERFEVENT   # -DHTTPSTATS
+ OBJMOD0  = version.o
+@@ -68,8 +68,8 @@ systemdinstall:	genericinstall
+ 		chmod 0644             $(DESTDIR)$(SYSDPATH)/atop-rotate.service
+ 		cp atop-rotate.timer   $(DESTDIR)$(SYSDPATH)
+ 		chmod 0644             $(DESTDIR)$(SYSDPATH)/atop-rotate.timer
+-		cp atop-pm.sh          $(DESTDIR)$(PMPATHD)
+-		chmod 0711             $(DESTDIR)$(PMPATHD)/atop-pm.sh
++		cp atop-pm.sh          $(DESTDIR)$(PMPATHD)/atop-pm
++		chmod 0711             $(DESTDIR)$(PMPATHD)/atop-pm
+ 		#
+ 		# only when making on target system:
+ 		#
+--- a/atop-pm.sh
++++ b/atop-pm.sh
+@@ -1,10 +1,12 @@
+ #!/bin/sh
+ 
++PATH=/sbin:/usr/sbin:/bin:/usr/bin
++
+ case "$1" in
+-	pre)	/usr/bin/systemctl stop atop
++	pre)	systemctl stop atop
+ 		exit 0
+ 		;;
+-	post)	/usr/bin/systemctl start atop
++	post)	systemctl start atop
+ 		exit 0
+ 		;;
+  	*)	exit 1

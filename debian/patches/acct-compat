@@ -1,0 +1,77 @@
+Description: better handle coexistence with acct, see #922224
+Author: Marc Haber <mh+debian-packages@zugschlus.de>
+Forwarded: not yet
+Last-Update: 2019-02-17
+--- a/acctproc.c
++++ b/acctproc.c
+@@ -158,7 +158,8 @@ struct pacctadm {
+ 	struct stat	stat;
+ } pacctadm[] = {
+ 	{ "/var/log/pacct",		{0, }, },
+-	{ "/var/account/pacct",		{0, }, }
++	{ "/var/account/pacct",		{0, }, },
++	{ "/var/log/account/pacct",	{0, }, }
+ };
+ 
+ /*
+--- a/atopacct.init
++++ b/atopacct.init
+@@ -29,7 +29,7 @@ case "$1" in
+   start)
+ 	# Check if process accounting already in use via psacct
+ 	#
+-	for PACCTFILE in /var/account/pacct /var/log/pacct
++	for PACCTFILE in /var/account/pacct /var/log/pacct /var/log/account/pacct
+ 	do
+ 		if [ -f "$PACCTFILE" ]	# file exists?
+ 		then
+--- a/man/atop.1
++++ b/man/atop.1
+@@ -162,11 +162,14 @@ daemon is not active,
+ verifies if the process accounting mechanism has been switched on
+ via the separate
+ .B psacct
+-package. In that case, the file
+-.B /var/account/pacct
+-is in use as process accounting file and 
++package. In that case, the files
++.B /var/account/pacct,
++.B /var/log/account/pacct
++and
++.B /var/log/pacct
++are considered to be in use as process accounting file and
+ .I atop
+-opens this file for reading.
++opens the respective file for reading.
+ .PP
+ .TP 4
+ 4.
+--- a/psaccs_atop
++++ b/psaccs_atop
+@@ -10,11 +10,12 @@
+     postrotate
+ 	# check if process accounting is installed
+ 	#
+-	if [ -e /etc/logrotate.d/psacct ]
+-	then
++ 	if grep -q 'savelog' /etc/cron.daily/acct 2>/dev/null; then
+ 	    # check if process accounting is actually in use
+ 	    #
+-	    ACCTFILE=`awk '$2 == "{" {print $1}' /etc/logrotate.d/psacct`
++	    # this is a heuristic that will fail once acct's cron.daily job changes
++	    # please file a bug report against atop if you encounter this
++            ACCTFILE=$(sed -n "/savelog[^\/]\+\(\/[[:alnum:]\/]\+\).*/{s//\1/;p;q;}" /etc/cron.daily/acct)
+ 
+ 	    if [ -f "$ACCTFILE" ]
+ 	    then
+--- a/psaccu_atop
++++ b/psaccu_atop
+@@ -8,7 +8,7 @@
+     ifempty
+     create 0600 root root
+     postrotate
+-	if [ -e /etc/logrotate.d/psacct ]
++	if grep -q 'savelog.*/var/log/account/pacct' /etc/cron.daily/acct 2>/dev/null
+ 	then
+ 	    # if the atop daemon does not run, restart it after
+ 	    # accounting file is rotated
