@@ -175,6 +175,7 @@ int		intfcompar(const void *, const void *);
 int		ifbcompar(const void *, const void *);
 int		nfsmcompar(const void *, const void *);
 int		contcompar(const void *, const void *);
+int		memnumacompar(const void *, const void *);
 
 int  		rawread(void);
 char		rawwrite (time_t, int, struct devtstat *,
