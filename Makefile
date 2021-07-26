@@ -20,7 +20,7 @@ PMPATH1  = /usr/lib/pm-utils/sleep.d
 PMPATH2  = /usr/lib64/pm-utils/sleep.d
 PMPATHD  = /usr/lib/systemd/system-sleep
 
-CFLAGS  += -O2 -I. -Wall -g $(shell pkg-config --cflags glib-2.0) -Wno-stringop-truncation # -DNOPERFEVENT   # -DHTTPSTATS
+CFLAGS  += -O2 -I. -Wall -g $(shell pkg-config --cflags glib-2.0) -Wno-stringop-truncation -DNOPERFEVENT   # -DHTTPSTATS
 LDFLAGS  = $(shell pkg-config --libs glib-2.0)
 OBJMOD0  = version.o
 OBJMOD1  = various.o  deviate.o   procdbase.o
