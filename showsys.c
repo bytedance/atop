@@ -2116,6 +2116,16 @@ sysprt_NETTCPORESET(struct sstat *sstat, extraparam *as, int badness, int *color
 sys_printdef syspdef_NETTCPORESET = {"NETTCPORESET", sysprt_NETTCPORESET, NULL};
 /*******************************************************************/
 static char *
+sysprt_NETTCPCSUMERR(struct sstat *sstat, extraparam *as, int badness, int *color)
+{
+        static char buf[16]="incsum  ";
+        val2valstr(sstat->net.tcp.InCsumErrors,  buf+6, 6, as->avgval, as->nsecs);
+        return buf;
+}
+
+sys_printdef syspdef_NETTCPCSUMERR = {"NETTCPCSUMERR", sysprt_NETTCPCSUMERR, NULL};
+/*******************************************************************/
+static char *
 sysprt_NETUDPNOPORT(struct sstat *sstat, extraparam *as, int badness, int *color) 
 {
         static char buf[16]="udpnp  ";

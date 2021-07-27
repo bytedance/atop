@@ -102,6 +102,7 @@ struct tcp_stats {
 	count_t RetransSegs;
 	count_t InErrs;
 	count_t OutRsts;
+	count_t InCsumErrors;
 };
 
 struct ipv6_stats {
