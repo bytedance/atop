@@ -2476,6 +2476,7 @@ get_hypervisor(void)
 void
 do_perfevents(char *tagname, char *tagvalue)
 {
-	mcleanstop(1, "atop built with NOPERFEVENT, cannot use perfevents\n");
+	if (strcmp("disable", tagvalue))
+		mcleanstop(1, "atop built with NOPERFEVENT, cannot use perfevents\n");
 }
 #endif
