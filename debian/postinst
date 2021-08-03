@@ -8,6 +8,10 @@ case "$1" in
         if [ ! -d "/run/systemd/system" ];then
             touch $LOGDIR/dummy_after $LOGDIR/dummy_before
         fi
+        if [ -d "/run/pacct_shadow.d" ];then
+            rm -rf /run/pacct_shadow.d
+            rm -rf /run/pacct_source
+        fi
         DATE="$(date +%Y%m%d)"
         # check whether atop will read its own latest file
         # point atop to the latest file and check for output on stdout

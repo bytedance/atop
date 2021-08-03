@@ -3,6 +3,7 @@ Description=Daily atop restart
 
 [Timer]
 OnCalendar=daily
+Persistent=true
 
 [Install]
 WantedBy=timers.target
