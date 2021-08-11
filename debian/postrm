@@ -6,6 +6,15 @@ set -e
 
 if [ "$1" = "purge" ]
 then
-	rm -rf /var/log/atop
+	#Like: logpath /data00/log/atop
+	ATOPRC="/etc/atoprc"
+	if [ -f $ATOPRC ]; then
+		RCLOGPATH=`cat $ATOPRC | grep -w '^logpath' -m 1 | awk '{print $2}'`
+		if [ -n "$RCLOGPATH" ]; then
+			rm -rf $RCLOGPATH
+		else
+			rm -rf /var/log/atop
+		fi
+	fi
 fi
 

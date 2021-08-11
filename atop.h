@@ -96,6 +96,7 @@ extern char		rawname[];
 extern char		rawreadflag;
 extern time_t		begintime, endtime, cursortime;	// epoch or time in day
 extern char		flaglist[];
+extern char		logpath[];
 extern struct visualize vis;
 
 extern int      	osrel;

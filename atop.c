@@ -314,6 +314,7 @@ unsigned long 	sampcnt;
 char		screen;
 int		linelen  = 80;
 int		generations = 28; /* By default, keep recent 30 days' log */
+char		logpath[256] = "/var/log/atop"; /*support writing atop log to another path, to avoid the '/' is occupied */
 int		threadmax  = 0;
 char		acctreason;	/* accounting not active (return val) 	*/
 char		rawname[RAWNAMESZ];
@@ -361,6 +362,7 @@ void do_flags(char *, char *);
 void do_interval(char *, char *);
 void do_linelength(char *, char *);
 void do_generations(char *, char *);
+void do_logpath(char *, char *);
 void do_username(char *, char *);
 void do_procname(char *, char *);
 void do_maxcpu(char *, char *);
@@ -415,6 +417,7 @@ static struct {
 	{	"interval",		do_interval,		0, },
 	{	"linelen",		do_linelength,		0, },
 	{	"generations",		do_generations,		0, },
+	{	"logpath",		do_logpath,		0, },
 	{	"username",		do_username,		0, },
 	{	"procname",		do_procname,		0, },
 	{	"maxlinecpu",		do_maxcpu,		0, },
@@ -1220,6 +1223,15 @@ void
 do_generations(char *name, char *val)
 {
 	generations = get_posval(name, val);
+}
+
+void
+do_logpath(char *name, char *val)
+{
+	//For safety purpose, check logpath's permission
+	check_file_perm(val);
+
+	strcpy(logpath, val);
 }
 
 /*
