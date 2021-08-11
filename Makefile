@@ -175,6 +175,8 @@ genericinstall:	atop atopacctd atopconvert atopcat
 		cp man/atoprc.5  	$(DESTDIR)$(MAN5PATH)
 		cp man/atopacctd.8  	$(DESTDIR)$(MAN8PATH)
 		#cp man/atopgpud.8  	$(DESTDIR)$(MAN8PATH)
+		cp atop.daily		$(DESTDIR)$(SCRPATH)
+		chmod 0711		$(DESTDIR)$(SCRPATH)/atop.daily
 
 ##########################################################################
 
