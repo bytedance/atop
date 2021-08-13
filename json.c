@@ -74,6 +74,8 @@ int 	json_print_CPL();
 int 	json_print_GPU();
 int 	json_print_MEM();
 int 	json_print_SWP();
+int	json_print_NUM();
+int	json_print_NUC();
 int 	json_print_PAG();
 int 	json_print_PSI();
 int 	json_print_LVM();
@@ -103,6 +105,8 @@ static struct labeldef	labeldef[] = {
 	{ "GPU",	json_print_GPU },
 	{ "MEM",	json_print_MEM },
 	{ "SWP",	json_print_SWP },
+	{ "NUM",	json_print_NUM },
+	{ "NUC",	json_print_NUC },
 	{ "PAG",	json_print_PAG },
 	{ "PSI",	json_print_PSI },
 	{ "LVM",	json_print_LVM },
@@ -696,6 +700,134 @@ json_print_SWP(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 		printf("%s", tmp);
 
 	free(tmp);
+	return ret;
+}
+
+int
+json_print_NUM(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
+{
+	int buflen = 0;
+	//FIXME: negotiate a proper LEN_BUF
+	//int len = LEN_BUF;
+	int len = 4096;
+	char *buf = (char *)malloc(len * sizeof(char));
+	int buf_index = 0;
+	int ret = 0;
+	int i;
+
+	if (ss->memnuma.nrnuma <= 0)
+		return 0;
+
+	buflen = sprintf(buf, ", %s: [", hp);
+	buf_index += buflen;
+
+	for (i = 0; i < ss->memnuma.nrnuma; i++) {
+		if (i > 0) {
+			buflen = sprintf(buf + buf_index, ", ");
+			buf_index += buflen;
+		}
+
+		buflen = snprintf(buf + buf_index, len, "{\"numanr\": %d, "
+			"\"memtotal:\": %lld, "
+			"\"memfree:\": %lld, "
+			"\"filepages:\": %lld, "
+			"\"active:\": %lld, "
+			"\"inactive:\": %lld, "
+			"\"dirty:\": %lld, "
+			"\"shmem:\": %lld, "
+			"\"slab:\": %lld, "
+			"\"sreclaimable:\": %lld, "
+			"\"hugepages_total:\": %lld, "
+			"\"frag:\": %.1f}",
+			i,
+			ss->memnuma.numa[i].totmem,
+			ss->memnuma.numa[i].freemem,
+			ss->memnuma.numa[i].filepage,
+			ss->memnuma.numa[i].active,
+			ss->memnuma.numa[i].inactive,
+			ss->memnuma.numa[i].dirtymem,
+			ss->memnuma.numa[i].shmem,
+			ss->memnuma.numa[i].slabmem,
+			ss->memnuma.numa[i].slabreclaim,
+			ss->memnuma.numa[i].tothp,
+			ss->memnuma.numa[i].frag);
+		buf_index += buflen;
+	}
+	buflen = sprintf(buf + buf_index, "]");
+	buf_index += buflen;
+
+	if (conn_fd) {
+		ret = json_unix_sock_write(conn_fd, buf, buf_index);
+		if (ret < 0)
+			goto out;
+	}
+	else
+		printf("%s", buf);
+
+out:
+	free(buf);
+	return ret;
+}
+
+int
+json_print_NUC(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_fd)
+{
+	int buflen = 0;
+	//FIXME: negotiate a proper LEN_BUF
+	//int len = LEN_BUF;
+	int len = 4096;
+	char *buf = (char *)malloc(len * sizeof(char));
+	int buf_index = 0;
+	int ret = 0;
+	int i;
+
+	if (ss->cpunuma.nrnuma <= 0)
+		return 0;
+
+	buflen = sprintf(buf, ", %s: [", hp);
+	buf_index += buflen;
+
+	for (i = 0; i < ss->cpunuma.nrnuma; i++) {
+		if (i > 0) {
+			buflen = sprintf(buf + buf_index, ", ");
+			buf_index += buflen;
+		}
+
+		buflen = snprintf(buf + buf_index, len, "{\"numanr\": %d, "
+			"\"stime\": %lld, "
+			"\"utime\": %lld, "
+			"\"ntime\": %lld, "
+			"\"itime\": %lld, "
+			"\"wtime\": %lld, "
+			"\"Itime\": %lld, "
+			"\"Stime\": %lld, "
+			"\"steal\": %lld, "
+			"\"guest\": %lld}",
+			i,
+			ss->cpunuma.numa[i].stime,
+			ss->cpunuma.numa[i].utime,
+			ss->cpunuma.numa[i].ntime,
+			ss->cpunuma.numa[i].itime,
+			ss->cpunuma.numa[i].wtime,
+			ss->cpunuma.numa[i].Itime,
+			ss->cpunuma.numa[i].Stime,
+			ss->cpunuma.numa[i].steal,
+			ss->cpunuma.numa[i].guest);
+		buf_index += buflen;
+	}
+	buflen = sprintf(buf + buf_index, "]");
+	buf_index += buflen;
+
+	if (conn_fd) {
+		ret = json_unix_sock_write(conn_fd, buf, buf_index);
+		if (ret < 0)
+			goto out;
+	}
+	else
+		printf("%s", buf);
+
+out:
+	free(buf);
 	return ret;
 }
 
