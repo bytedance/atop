@@ -1126,6 +1126,7 @@ prusage(char *myname)
 	printf("\t  -%c  determine WCHAN (string) per thread\n", MGETWCHAN);
 	printf("\t  -P  generate parseable output for specified label(s)\n");
 	printf("\t  -O  generate json style output for all label(s) \n");
+	printf("\t  -H  filter top n threads contained within one process \n");
 	printf("\t  -L  alternate line length (default 80) in case of "
 			"non-screen output\n");
 

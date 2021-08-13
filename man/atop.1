@@ -6,7 +6,7 @@
 Interactive Usage:
 .P
 .B atop
-[\-g|\-m|\-d|\-n|\-u|\-p|\-s|\-c|\-v|\-o|\-y|\-Y] [\-C|\-M|\-D|\-N|\-A] [\-afFG1xR] [\-L linelen] [\-Plabel[,label]...]
+[\-g|\-m|\-d|\-n|\-u|\-p|\-s|\-c|\-v|\-o|\-y|\-Y] [\-C|\-M|\-D|\-N|\-A|\-O|\-H] [\-afFG1xR] [\-L linelen] [\-Plabel[,label]...]
 [
 .I interval
 [
@@ -587,6 +587,34 @@ the number of received and sent network packets are shown.
 .br
 The last columns contain the accumulated occupation percentage for the
 chosen resource (default: cpu) and the Docker container id (CID).
+.PP
+.TP 5
+.B O
+Generate json style output for all label(s).
+When the
+.B -O
+option is specified, the following argument,
+.I output_option
+is interpreted and passed to the master process. Valid
+.I output_option
+are:
+"stdio" (write json to stdio together with the interactive interface),
+"only" (write json to stdio, without the interactive interface shown),
+"unixsocket" (write json to unixsocket only).
+.PP
+.TP 5
+.Pp
+.B H
+Limit threads number, in case one process has too many threads,
+the raw log will be too huge and disk will be soon full.
+When the
+.B -H
+option is specified, the following argument,
+.I threadmax
+is interpreted as the max thread number contained within one process.
+Top
+.I threadmax
+threads will be filterd.
 .PP
 .TP 5
 .B C 
