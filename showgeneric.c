@@ -1181,7 +1181,7 @@ generic_samp(time_t curtime, int nsecs, struct devtstat *devtstat,
                                 move(statline, 0);
                                 clrtoeol();
                                 printw("Enter new time "
-				       "(format [YYYYMMDD]hhmm): ");
+				       "(format [YYYYMMDD]hhmm[ss]): ");
 
                                 branchtime[0] = '\0';
                                 scanw("%31s\n", branchtime);
