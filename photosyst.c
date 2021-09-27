@@ -1013,6 +1013,7 @@ photosyst(struct sstat *si)
 					si->cpunuma.numa[j].Stime += si->cpu.cpu[i].Stime;
 					si->cpunuma.numa[j].steal += si->cpu.cpu[i].steal;
 					si->cpunuma.numa[j].guest += si->cpu.cpu[i].guest;
+					si->cpu.cpu[i].numanr = j;
 				}
 			}
 		}
@@ -1023,6 +1024,9 @@ photosyst(struct sstat *si)
 	else
 	{
 		si->cpunuma.nrnuma = 0;
+		for (i = 0; i < si->cpu.nrcpu; i++) {
+			si->cpu.cpu[i].numanr = 0;
+		}
 	}
 
 	/*

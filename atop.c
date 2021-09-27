@@ -296,6 +296,7 @@
 #include "showgeneric.h"
 #include "parseable.h"
 #include "json.h"
+#include "intuitive.h"
 #include "gpucom.h"
 
 #define	allflags  "ab:cde:fghijklmnopqrstuvwxyz1ABCDEFGH:IJKL:MNO:P:QRSTUVWXYZ"
@@ -621,6 +622,10 @@ main(int argc, char *argv[])
 					prusage(argv[0]);
 
 				threadmax = atoi(optarg);
+				break;
+
+                           case 'I':		/* intuitively display all statistics at a glance */
+				vis.show_samp = intuitiveout;
 				break;
 
                            case MALLPROC:	/* all processes per sample ? */

@@ -24,7 +24,7 @@ CFLAGS  += -O2 -I. -Wall -g $(shell pkg-config --cflags glib-2.0) -Wno-stringop-
 LDFLAGS  = $(shell pkg-config --libs glib-2.0)
 OBJMOD0  = version.o
 OBJMOD1  = various.o  deviate.o   procdbase.o
-OBJMOD2  = acctproc.o photoproc.o photosyst.o  rawlog.o ifprop.o parseable.o json.o filter.o
+OBJMOD2  = acctproc.o photoproc.o photosyst.o  rawlog.o ifprop.o parseable.o json.o filter.o intuitive.o
 OBJMOD3  = showgeneric.o          showlinux.o  showsys.o showprocs.o
 OBJMOD4  = atopsar.o  netatopif.o gpucom.o
 ALLMODS  = $(OBJMOD0) $(OBJMOD1) $(OBJMOD2) $(OBJMOD3) $(OBJMOD4)
@@ -194,6 +194,7 @@ various.o:	atop.h                           acctproc.h
 ifprop.o:	atop.h	            photosyst.h             ifprop.h
 parseable.o:	atop.h	photoproc.h photosyst.h             parseable.h
 json.o:		atop.h	photoproc.h photosyst.h  json.h
+intuitive.o:	atop.h	photosyst.h showgeneric.h intuitive.h
 filter.o:	atop.h
 deviate.o:	atop.h	photoproc.h photosyst.h
 procdbase.o:	atop.h	photoproc.h
