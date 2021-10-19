@@ -1021,7 +1021,7 @@ readchunk(int fd, void *buf, int len)
 static void
 try_other_version(int majorversion, int minorversion)
 {
-	char		tmpbuf[1024], *p;
+	char		tmpbuf[1024];
 	extern char	**argvp;
 	int		fds;
 	struct rlimit	rlimit;
@@ -1032,8 +1032,7 @@ try_other_version(int majorversion, int minorversion)
 	** the current pathname (if any) is stripped off
 	*/
 	snprintf(tmpbuf, sizeof tmpbuf, "%s-%d.%d",
-		(p = strrchr(*argvp, '/')) ? p+1 : *argvp,
-			majorversion, minorversion);
+		BINPATH, majorversion, minorversion);
 
 	fprintf(stderr, "trying to activate %s....\n", tmpbuf);
 
