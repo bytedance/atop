@@ -1,3 +1,10 @@
+atop (2.6.0+byted2) unstable; urgency=medium
+
+  * upload to unstable
+    Some critical fixes, including /etc/logrotate.d* and debhelper behavior.
+
+ -- Fei Li <lifei.shirley@bytedance.com>  Mon, 1 Nov 2021 10:54:06 +0100
+
 atop (2.6.0+byted1) unstable; urgency=medium
 
   * upload to unstable
