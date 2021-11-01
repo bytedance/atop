@@ -26,6 +26,20 @@ case "$1" in
     ;;
 esac
 
+# Forced umask and restart atop-rotate.timer, instead of try-restart,
+# man systemctl for more details
+deb-systemd-helper unmask atop-rotate.timer >/dev/null || true
+
+if [ -d /run/systemd/system ]; then
+        systemctl --system daemon-reload >/dev/null || true
+        if [ -n "$2" ]; then
+                _dh_action=restart
+        else
+                _dh_action=start
+        fi
+        deb-systemd-invoke $_dh_action atop-rotate.timer >/dev/null || true
+fi
+
 #DEBHELPER#
 
 # vim: tabstop=4 expandtab
