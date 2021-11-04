@@ -10,7 +10,7 @@ case "$1" in
         fi
         if [ -d "/run/pacct_shadow.d" ];then
             rm -rf /run/pacct_shadow.d
-            rm -rf /run/pacct_source
+            rm -f /run/pacct_source
         fi
         DATE="$(date +%Y%m%d)"
         # check whether atop will read its own latest file

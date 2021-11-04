@@ -11,8 +11,8 @@ if [ -d /etc/logrotate.d ]; then
     rm -f /etc/logrotate.d/psaccs_atop || exit $?
     rm -f /etc/logrotate.d/psaccu_atop || exit $?
 fi
-# For versions >= 2.6.1, we use systemd-timer instead of cron
+# For versions >= 2.6.0+byted2, we use systemd-timer instead of cron
 if [ -d /run/systemd/system ] && [ -n "/etc/cron.d/atop" ]; then
-    rm -rf /etc/cron.d/atop* || exit $?
-    rm -rf /var/log/atop/dummy_* || exit $?
+    rm -f /etc/cron.d/atop* || exit $?
+    rm -f /var/log/atop/dummy_* || exit $?
 fi
