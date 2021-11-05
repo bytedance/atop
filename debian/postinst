@@ -26,6 +26,27 @@ case "$1" in
     ;;
 esac
 
+# Not sure which debhelper version is used when building atop, manually enable
+# atop/atopacct/atop-rotate.
+# 1. atop.service
+if deb-systemd-helper --quiet was-enabled 'atop.service'; then
+    deb-systemd-helper enable 'atop.service' > /dev/null || true
+else
+    deb-systemd-helper update-state 'atop.service' >/dev/null || true
+fi
+# 2. atopacct.service
+if deb-systemd-helper --quiet was-enabled 'atopacct.service'; then
+    deb-systemd-helper enable 'atopacct.service' > /dev/null || true
+else
+    deb-systemd-helper update-state 'atopacct.service' >/dev/null || true
+fi
+# 3. atop-rotate.timer
+if deb-systemd-helper --quiet was-enabled 'atop-rotate.timer'; then
+    deb-systemd-helper enable 'atop-rotate.timer' > /dev/null || true
+else
+    deb-systemd-helper update-state 'atop-rotate.timer' >/dev/null || true
+fi
+
 # Forced umask and restart atop-rotate.timer, instead of try-restart,
 # man systemctl for more details
 deb-systemd-helper unmask atop-rotate.timer >/dev/null || true
