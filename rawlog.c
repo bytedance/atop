@@ -66,6 +66,7 @@ static void	try_other_version(int, int);
 extern int	get_posval(char *name, char *val);
 static void	try_drop_pagecache(int, off_t, off_t);
 static void	onexit_pagecache(int, void*);
+void		check_file_perm(char *);
 
 /*
 ** write a raw record to file
@@ -416,6 +417,9 @@ rawread(void)
 
 		free(py);
 	}
+
+	//For safety purpose, check atop logs' permission
+	check_file_perm(rawname);
 
 	/*
 	** make sure the file is a regular file (seekable) or
@@ -1087,4 +1091,24 @@ onexit_pagecache(int e, void* p)
 	int fd = *(int*)p;
 	if (fd > 0)
 		try_drop_pagecache(fd, 0, 0);
+}
+
+void
+check_file_perm(char *file)
+{
+	struct stat st;
+	if ( lstat(file, &st) == -1 ) {
+		fprintf(stderr, "lstat failed\n");
+		cleanstop(1);
+	}
+
+	//For safety purpose, only root allowed
+	if ( st.st_uid != getuid() || st.st_gid != getgid()) {
+		fprintf(stderr, "Logpath can only be owned by root\n");
+		cleanstop(1);
+	}
+	if ( st.st_mode & (S_IWGRP | S_IWOTH) ) {
+		fprintf(stderr, "Write permission limited only to root\n");
+		cleanstop(1);
+	}
 }

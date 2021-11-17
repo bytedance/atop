@@ -178,6 +178,7 @@ int		contcompar(const void *, const void *);
 int		memnumacompar(const void *, const void *);
 int		cpunumacompar(const void *, const void *);
 
+void		check_file_perm(char *);
 int  		rawread(void);
 char		rawwrite (time_t, int, struct devtstat *,
 		            struct devtstat *, struct sstat *,
