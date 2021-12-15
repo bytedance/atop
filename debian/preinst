@@ -1,10 +1,10 @@
 #!/bin/bash
-set -e
+#set -e
 if [ -f /usr/bin/atop ]; then
     VER=`/usr/bin/atop -V | grep Version | awk '{print $2}'`
     VER24="2.4"
     if [[ $VER =~ $VER24 ]]; then
-        cp /usr/bin/atop /usr/bin/atop-2.4
+        /bin/cp -a /usr/bin/atop /usr/bin/atop-2.4
     fi
 fi
 if [ -d /etc/logrotate.d ]; then
