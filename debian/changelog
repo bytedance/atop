@@ -1,3 +1,10 @@
+atop (2.6.0+byted3) unstable; urgency=medium
+
+  * upload to stable
+    Allow non-root users to read $logpath/atop_*
+
+ -- Fei Li <lifei.shirley@bytedance.com>  Tue, 21 Dec 2021 18:12:50 +0100
+
 atop (2.6.0+byted2) unstable; urgency=medium
 
   * upload to unstable
