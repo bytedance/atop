@@ -1103,7 +1103,7 @@ check_file_perm(char *file)
 	}
 
 	//For safety purpose, only root allowed
-	if ( st.st_uid != getuid() || st.st_gid != getgid()) {
+	if ( st.st_uid != 0 || st.st_gid != 0) {
 		fprintf(stderr, "Logpath can only be owned by root\n");
 		cleanstop(1);
 	}
