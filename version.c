@@ -15,7 +15,7 @@ getstrvers(void)
 	snprintf(vers, sizeof vers,
 		"Version: %s - %s     <gerlof.langeveld@atoptool.nl>%s%s%s",
 		atopversion, atopdate,
-		"\nMaintained by Bytedance. Contact:\n",
+		"\nMaintained by ByteDance. Contact:\n",
 		"\t\t\t\t\t<pizhenwei@bytedance.com>\n",
 		"\t\t\t\t\t<lifei.shirley@bytedance.com>");
 
