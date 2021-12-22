@@ -11,8 +11,8 @@ then
 	if [ -f $ATOPRC ]; then
 		RCLOGPATH=`cat $ATOPRC | grep -w '^logpath' -m 1 | awk '{print $2}'`
 		if [ -n "$RCLOGPATH" ]; then
-			rm -rf $RCLOGPATH/atop_*
-			rm -rf $RCLOGPATH/daily.log
+			rm -f $RCLOGPATH/atop_*
+			rm -f $RCLOGPATH/daily.log
 		else
 			rm -rf /var/log/atop
 		fi

@@ -79,7 +79,7 @@ if [ $LOGSIZE -gt $MAXSIZE ]; then
     while [ $LOGSIZE -gt $MAXSIZE ]; do
         RMFILE=`ls "$LOGPATH" | grep atop_ | head -n 1`
         echo $RMFILE
-        rm -rf "$LOGPATH"/$RMFILE
+        rm -f "$LOGPATH"/$RMFILE
         LOGSIZE=`du -s "$LOGPATH" | awk '{print $1}'`
     done
 fi
