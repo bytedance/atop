@@ -1234,7 +1234,13 @@ json_print_NET(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 		"\"rpacketsIP\": %lld, "
 		"\"spacketsIP\": %lld, "
 		"\"dpacketsIP\": %lld, "
-		"\"fpacketsIP\": %lld}",
+		"\"fpacketsIP\": %lld, "
+		"\"tcpao\": %lld, "
+		"\"tcppo\": %lld, "
+		"\"tcpce\": %lld, "
+		"\"tcprs\": %lld, "
+		"\"tcpie\": %lld, "
+		"\"tcpor\": %lld}",
 		ss->net.tcp.InSegs,
 		ss->net.tcp.OutSegs,
 		ss->net.udpv4.InDatagrams +
@@ -1248,7 +1254,13 @@ json_print_NET(char *hp, struct sstat *ss, struct tstat *ps, int nact, int conn_
 		ss->net.ipv4.InDelivers +
 		ss->net.ipv6.Ip6InDelivers,
 		ss->net.ipv4.ForwDatagrams +
-		ss->net.ipv6.Ip6OutForwDatagrams);
+		ss->net.ipv6.Ip6OutForwDatagrams,
+		ss->net.tcp.ActiveOpens,
+		ss->net.tcp.PassiveOpens,
+		ss->net.tcp.CurrEstab,
+		ss->net.tcp.RetransSegs,
+		ss->net.tcp.InErrs,
+		ss->net.tcp.OutRsts);
 
 	if (conn_fd) {
 		ret = json_unix_sock_write(conn_fd, tmp, buflen);
