@@ -273,7 +273,8 @@ devstat_filter_thread(struct devtstat *devtstat)
 			}
 			/* get top threadmax by (cpu+mem+dsk), and sort by pid */
 			qsort(tmp, (th - 1), sizeof(struct tstat *), comthread);
-			for (nth = 0; nth < threadmax; nth++) {
+			int min = th < threadmax ? th : threadmax;
+			for (nth = 0; nth < min; nth++) {
 				tstat->taskall[new++] = *(tmp[nth]);
 				tstat->ntaskall++;
 			}
