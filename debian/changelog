@@ -1,3 +1,12 @@
+atop (2.6.0+byted4) unstable; urgency=medium
+
+  * upload to stable
+    Fix json: add more indicators for net
+    Calibrate the value of nthr for each process
+    Fix ArrayIndexOutOfBounds when filtering top 100 threads
+
+ -- Fei Li <lifei.shirley@bytedance.com>  Wed, 16 Mar 2022 19:18:55 +0100
+
 atop (2.6.0+byted3) unstable; urgency=medium
 
   * upload to stable
