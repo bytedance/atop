@@ -2298,6 +2298,8 @@ get_infiniband(struct ifbstat *si)
 
 					if (nib >= MAXIBPORT)
 						break;
+				} else {
+					free(p);
 				}
 			}
 
@@ -2319,6 +2321,16 @@ get_infiniband(struct ifbstat *si)
 
 		// variable metrics from sysfs
 		ibstat(&(ibcache[i]), &(si->ifb[i]));
+
+		char *d_name_ptr = NULL; 
+		if (d_name_ptr != ibcache[i].ibha){
+			d_name_ptr = ibcache[i].ibha;
+			free(ibcache[i].ibha);
+		}
+		free(ibcache[i].pathrcvb);	
+		free(ibcache[i].pathsndb);	
+		free(ibcache[i].pathrcvp);	
+		free(ibcache[i].pathsndp);
 	}	
 
 	si->nrports = nib;
