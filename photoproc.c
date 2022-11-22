@@ -31,11 +31,14 @@
 ** --------------------------------------------------------------------------
 */
 
+#define _GNU_SOURCE
 #include <sys/types.h>
 #include <sys/param.h>
+#include <sys/syscall.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <time.h>
@@ -63,6 +66,7 @@ static int	proccont(struct tstat *);
 static void	proccmd(struct tstat *);
 static void	procsmaps(struct tstat *);
 static void	procwchan(struct tstat *);
+static void	procfd(struct tstat *);
 static count_t	procschedstat(struct tstat *);
 static int	proccgroupv2(struct tstat *);
 static struct cgroupv2vals *
@@ -217,6 +221,8 @@ photoproc(struct tstat *tasklist, int maxtask)
 		*/
                 if (getwchan)
                 	procwchan(curtask);
+
+		procfd(curtask);
 
 		// read network stats from netatop
 		netatop_gettask(curtask->gen.tgid, 'g', curtask);
@@ -957,6 +963,57 @@ procschedstat(struct tstat *curtask)
 	}
 
 	return curtask->cpu.rundelay;
+}
+
+/*
+** get current number of opened file descriptors for process
+** to monitor if fd leaks.
+** Considering users may set the max number of open files to
+** a very large number, we use getdents[64] SYSCALL directly
+** instead of glibc's readdir() for performance consideration.
+** Also, define MAX_OPEN to be 1024 * 1024 for display.
+*/
+struct linux_dirent64 {
+	unsigned long  d_ino;
+	off_t          d_off;
+	unsigned short d_reclen;
+	unsigned char  d_type;
+	char           d_name[];
+};
+
+#define MAX_OPEN 1024 * 1024
+
+static void
+procfd(struct tstat *curtask)
+{
+	int fd, nread, fd_num = 0;
+	struct linux_dirent64 *buf, *d;
+	unsigned int count = 0;
+
+	if ( (fd = open("fd", O_RDONLY | O_DIRECTORY)) != -1) {
+		count = MAX_OPEN * sizeof(struct linux_dirent64);
+		buf = malloc(count);
+		ptrverify(buf, "Malloc failed for process's opened files\n");
+
+		nread = syscall(SYS_getdents64, fd, buf, count);
+		if (nread == -1) {
+			curtask->cpu.nropen = -1;
+		} else if (nread == 0) {
+			curtask->cpu.nropen = 0;
+		} else if (nread > 0) {
+			for (int bops = 0; bops < nread;) {
+				d = (struct linux_dirent64 *)((char *)buf + bops);
+				bops += d->d_reclen;
+				fd_num++;
+			}
+			curtask->cpu.nropen = fd_num - 2;
+		}
+
+		close(fd);
+		free(buf);
+	} else {
+		curtask->cpu.nropen = 0;
+	}
 }
 
 /*
