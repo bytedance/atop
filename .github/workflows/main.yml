@@ -8,7 +8,6 @@ jobs:
         id: step_one
         run: |
           ls -l 
-          cd atop
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
