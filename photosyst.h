@@ -109,6 +109,10 @@ struct	mempernuma {
 
 	count_t	shmem;		// tot shmem incl. tmpfs (pages) for this numa
 	count_t	tothp;		// total huge pages (huge pages) for this numa
+
+	int min;		// the 'min' watermark sum of all zones for this numa
+	int low;		// the 'low' watermark sum of all zones for this numa
+	int high;		// the 'high' watermark sum of all zones for this numa
 };
 
 struct	memnuma {

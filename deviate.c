@@ -753,6 +753,24 @@ deviatsyst(struct sstat *cur, struct sstat *pre, struct sstat *dev,
 		dev->memnuma.numa[i].slabreclaim = cur->memnuma.numa[i].slabreclaim;
 		dev->memnuma.numa[i].tothp       = cur->memnuma.numa[i].tothp;
 		dev->memnuma.numa[i].frag        = cur->memnuma.numa[i].frag;
+
+		//If min&low&high are all 0, we consume watermark_scale_factor does not change
+		if (cur->memnuma.numa[i].min == 0 && cur->memnuma.numa[i].low == 0
+			&& cur->memnuma.numa[i].high == 0)
+		{
+			dev->memnuma.numa[i].min  = pre->memnuma.numa[i].min;
+			dev->memnuma.numa[i].low  = pre->memnuma.numa[i].low;
+			dev->memnuma.numa[i].high = pre->memnuma.numa[i].high;
+
+			//Also store into cursstat, as it will be exchanged to presstat later
+			cur->memnuma.numa[i].min  = pre->memnuma.numa[i].min;
+			cur->memnuma.numa[i].low  = pre->memnuma.numa[i].low;
+			cur->memnuma.numa[i].high = pre->memnuma.numa[i].high;
+		} else {
+			dev->memnuma.numa[i].min  = cur->memnuma.numa[i].min;
+			dev->memnuma.numa[i].low  = cur->memnuma.numa[i].low;
+			dev->memnuma.numa[i].high = cur->memnuma.numa[i].high;
+		}
 	}
 
 	dev->cpunuma.nrnuma = cur->cpunuma.nrnuma;

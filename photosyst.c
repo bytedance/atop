@@ -265,6 +265,42 @@ numa_parse_bitmap_v2(char *line, struct bitmask *mask)
 }
 
 void
+getWatermark(struct sstat *si)
+{
+	FILE 	*fp;
+	char	linebuf[512], nam[64];
+	int 	node;
+	count_t	cnt;
+
+	//What we need is like `cat /proc/zoneinfo | grep -E 'Node|min|low|high '`
+	if ( (fp = fopen("/proc/zoneinfo", "r")) != NULL)
+	{
+		while ( fgets(linebuf, sizeof(linebuf), fp) != NULL )
+		{
+			if ( strncmp(linebuf, "Node", 4) == EQ)
+			{
+				sscanf(linebuf, "Node %d, zone", &node);
+			} else {
+				sscanf(linebuf, "%s %lld", nam, &cnt);
+				if ( strncmp(nam, "min", 3) == EQ)
+				{
+					si->memnuma.numa[node].min += cnt;
+				}
+				if ( strncmp(nam, "low", 3) == EQ)
+				{
+					si->memnuma.numa[node].low += cnt;
+				}
+				if ( strncmp(nam, "high", 4) == EQ && strlen(nam) == 4 )
+				{
+					si->memnuma.numa[node].high += cnt;
+				}
+			}
+		}
+		fclose(fp);
+	}
+}
+
+void
 photosyst(struct sstat *si)
 {
 	static char	part_stats = 1; /* per-partition statistics ? */
@@ -969,6 +1005,42 @@ photosyst(struct sstat *si)
 					si->memnuma.numa[cnts[0]].frag = total_frag/MAX_ORDER;
 			}
 			fclose(fp);
+		}
+	}
+
+	/*
+	** Gather min/low/high watermark sum of all zones for each NUMA.
+	** As these watermarks are hardly updated once reboots, for
+	** performance consideration, we employ to check if the value from
+	** /proc/fs/vm/watermark_scale_factor changes, instead of frequently
+	** reading /proc/zoneinfo file during each interval. If the
+	** watermark_scale_factor is not changed, continue to use the previous
+	** value, or else read /proc/zoneinfo again to get the latest value.
+	*/
+	if (si->memnuma.nrnuma > 0)
+	{
+		static int firstcall = 1;
+		static int prevfactor = 10;
+		int factor;
+
+		if ( (fp = fopen("sys/vm/watermark_scale_factor", "r")) != NULL)
+		{
+			if ( fgets(linebuf, sizeof(linebuf), fp) != NULL)
+			{
+				sscanf(linebuf, "%d", &factor);
+			}
+
+			fclose(fp);
+		}
+
+		if (firstcall == 1) {
+			getWatermark(si);
+			prevfactor = factor;
+			firstcall = 0;
+		}
+
+		if (factor != prevfactor) {
+			getWatermark(si);
 		}
 	}
 

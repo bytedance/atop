@@ -2124,17 +2124,30 @@ prisyst(struct sstat *sstat, int curline, int nsecs, int avgval,
 		     extra.index < sstat->memnuma.nrnuma && lin < maxnumalines;
 		     extra.index++)
 		{
-			busy = (sstat->memnuma.numa[extra.index].totmem
-				- sstat->memnuma.numa[extra.index].freemem
-				- sstat->memnuma.numa[extra.index].filepage
-				- sstat->memnuma.numa[extra.index].slabreclaim
-				+ sstat->memnuma.numa[extra.index].shmem)
+			if (sstat->memnuma.numa[extra.index].high > 0)
+			{
+				count_t freemem = sstat->memnuma.numa[extra.index].freemem;
+				if (freemem <= sstat->memnuma.numa[extra.index].min)
+					badness = 100;
+				else if (freemem <= sstat->memnuma.numa[extra.index].low)
+					badness = almostcrit;
+				else if (freemem <= sstat->memnuma.numa[extra.index].high)
+					badness = 60;
+				else
+					badness = 0;
+			} else {//In case failing to get watermark, fallback to used/total
+				busy = (sstat->memnuma.numa[extra.index].totmem
+					- sstat->memnuma.numa[extra.index].freemem
+					- sstat->memnuma.numa[extra.index].filepage
+					- sstat->memnuma.numa[extra.index].slabreclaim
+					+ sstat->memnuma.numa[extra.index].shmem)
 					* 100.0 / sstat->memnuma.numa[extra.index].totmem;
 
-			if (membadness)
-				badness = busy * 100 / membadness;
-			else
-				badness = 0;
+				if (membadness)
+					badness = busy * 100 / membadness;
+				else
+					badness = 0;
+			}
 
 			if (highbadness < badness)
 			{

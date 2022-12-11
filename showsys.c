@@ -101,6 +101,24 @@ syscolorlabel(char *labeltext, unsigned int badness)
 
                         return COLORALMOST;
                 }
+
+		if ( strcmp(labeltext, "NUM") == EQ && badness >= 60)
+		{
+			if (usecolors)
+			{
+				attron(COLOR_PAIR(COLOR_GREEN));
+				printg(labeltext);
+				attroff(COLOR_PAIR(COLOR_GREEN));
+			}
+			else
+			{
+				attron(A_BOLD);
+				printg(labeltext);
+				attroff(A_BOLD);
+			}
+
+                        return COLORALMOST;
+		}
         }
 
         /*
