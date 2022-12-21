@@ -37,8 +37,8 @@ jobs:
         id: step_four
         run: |
           ls -l /var/log/atop/
-          if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check1" ; exit -1;fi
-          if [ ! -d "/var/log/ato/" ]; then echo "assert: logfile_check1" ; exit -2;fi
-          if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
+          if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi
+          if [ ! -d "/var/log/atop/atop_$(date +%Y%m%d)"]; then echo "assert: logfile_check/var/log/atop/atop_$(date +%Y%m%d)" ; exit -2;fi           
+          if [ ! -d "/var/log/atop/atp_*"]; then echo "assert: logfile_check/var/log/atop" ; exit -1; exit;fi
           if ! find  /var/log/atop/ -name "ato_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
   
