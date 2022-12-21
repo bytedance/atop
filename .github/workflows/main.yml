@@ -10,12 +10,13 @@ jobs:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0
         id: step_one
-      - name: subcmd_check
+      - name: install
         id: step_two
         run: |
           ls
           pwd
-          cd atop
+          git branch
+          sudo make && sudo make install
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
@@ -36,96 +37,4 @@ jobs:
         run: |
           ls -l /var/log/atop/
           if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
-  job2: # 发布任务
-    runs-on: ubuntu-latest # 运行系统环境
-    steps: # 步骤
-      - name: build
-        id: step_one
-        run: |
-          git clone https://github.com/liutingjieni/atop.git
-          cd atop
-          if atop -V ; then echo "assert: atop have installed "; exit;fi
-          sudo make && sudo make install
-          echo '安装完成'
-          systemctl status atop.service 
-          systemctl status atopacct.service
-          systemctl status atop-rotate.timer
-          systemctl cat atop.service
-          systemctl cat atopacct.service
-          systemctl cat atop-rotate.timer
-      - name: subcmd_check
-        id: step_two
-        run: |
-          if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
-          if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
-      - name: shadowfile_check
-        id: step_three
-        run: |
-          if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-      - name: logfile_check
-        id: step_four
-        run: |
-          ls -l /var/log/atop/
-          if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/
-  job3: # 发布任务
-    runs-on: ubuntu-latest # 运行系统环境
-    steps: # 步骤
-      - name: build
-        id: step_one
-        run: |
-          git clone https://github.com/liutingjieni/atop.git
-          cd atop
-          if atop -V ; then echo "assert: atop have installed "; exit;fi
-          sudo make && sudo make install
-          echo '安装完成'
-          systemctl status atop.service 
-          systemctl status atopacct.service
-          systemctl status atop-rotate.timer
-          systemctl cat atop.service
-          systemctl cat atopacct.service
-          systemctl cat atop-rotate.timer
-      - name: subcmd_check
-        id: step_two
-        run: |
-          if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
-          if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
-      - name: shadowfile_check
-        id: step_three
-        run: |
-          if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-      - name: logfile_check
-        id: step_four
-        run: |
-          ls -l /var/log/atop/
-          if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/
-  job4: # 发布任务
-    runs-on: ubuntu-latest # 运行系统环境
-    steps: # 步骤
-      - name: build
-        id: step_one
-        run: |
-          git clone https://github.com/liutingjieni/atop.git
-          cd atop
-          if atop -V ; then echo "assert: atop have installed "; exit;fi
-          sudo make && sudo make install
-          echo '安装完成'
-          systemctl status atop.service 
-          systemctl status atopacct.service
-          systemctl status atop-rotate.timer
-          systemctl cat atop.service
-          systemctl cat atopacct.service
-          systemctl cat atop-rotate.timer
-      - name: subcmd_check
-        id: step_two
-        run: |
-          if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
-          if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
-      - name: shadowfile_check
-        id: step_three
-        run: |
-          if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-      - name: logfile_check
-        id: step_four
-        run: |
-          ls -l /var/log/atop/
-          if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/
+  
