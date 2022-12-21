@@ -33,6 +33,7 @@ jobs:
           if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
           if ! sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atopacctd.paf_check error "; sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'; exit;fi
           if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
+          if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
       - name: logfile_check
         id: step_four
         run: |
