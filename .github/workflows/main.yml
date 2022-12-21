@@ -32,12 +32,9 @@ jobs:
         run: |
           if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
           if ! ls -A /run/pacct_shado.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-          if [! -f /run/pacct_shadow.d/]; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-          if [! -f /run/pacct_shado.d/]; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
           if ! sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atopacctd.paf_check error "; sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'; exit;fi
           if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
-          if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
-          if ! 0; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
+          if ! 0; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit -1;fi
           sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l
           ls
       - name: logfile_check
