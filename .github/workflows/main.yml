@@ -16,7 +16,6 @@ jobs:
           ls
           pwd
           git branch
-          sudo make && sudo make install
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
@@ -32,6 +31,8 @@ jobs:
         id: step_three
         run: |
           if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
+          if ! ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atopacctd.paf_check error "; ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'; exit;fi
+          if ! ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
       - name: logfile_check
         id: step_four
         run: |
