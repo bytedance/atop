@@ -30,17 +30,16 @@ jobs:
       - name: shadowfile_check
         id: step_three
         run: |
-          if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-          if ! ls -A /run/pacct_shado.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit;fi
-          if ! sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atopacctd.paf_check error "; sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'; exit;fi
-          if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
-          if ! 0; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit -1;fi
-          sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l
-          ls
+          if ! ls -A /run/pacct_shadow.d/|wc -l; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit -1;fi
+          if ! sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atopacctd.paf_check error "; sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf'; exit -2;fi
+          if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit -3;fi
+          if ! 0; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit -4;fi
       - name: logfile_check
         id: step_four
         run: |
           ls -l /var/log/atop/
+          if [ ! -d "/var/log/atop/"]; then assert: logfile_check1 ; exit -1;fi
+          if [ ! -d "/var/log/ato/"]; then assert: logfile_check1 ; exit -1;fi
           if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
           if ! find  /var/log/atop/ -name "ato_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
   
