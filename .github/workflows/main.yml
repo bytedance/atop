@@ -35,6 +35,8 @@ jobs:
           if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
           if ! sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
           if ! 0; then echo "assert: atop.paf_check error "; sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf';exit;fi
+          sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat'|wc -l
+          ls
       - name: logfile_check
         id: step_four
         run: |
