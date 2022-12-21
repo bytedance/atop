@@ -42,4 +42,5 @@ jobs:
         run: |
           ls -l /var/log/atop/
           if ! find  /var/log/atop/ -name "atop_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
+          if ! find  /var/log/atop/ -name "ato_*"|wc -l; then echo "assert: logfile_check error(/var/log/atop/) ";find  /var/log/atop/ -name \"atop_*\"； exit;fi
   
