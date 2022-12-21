@@ -5,9 +5,17 @@ jobs:
     runs-on: ubuntu-latest # 运行系统环境
     steps: # 步骤
       - name: build
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0
         id: step_one
+      - name: subcmd_check
+        id: step_two
         run: |
-          ls -l 
+          ls
+          pwd
+          cd atop
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
@@ -17,9 +25,6 @@ jobs:
           systemctl cat atop.service
           systemctl cat atopacct.service
           systemctl cat atop-rotate.timer
-      - name: subcmd_check
-        id: step_two
-        run: |
           if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
           if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
       - name: shadowfile_check
