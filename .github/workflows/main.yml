@@ -38,5 +38,7 @@ jobs:
         run: |
           ls -l /var/log/atop/
           if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi
-          if [ ! -d "/var/log/atop/atop_*" ]; then echo "assert: logfile_check/var/log/atop/atop_$(date +%Y%m%d)" ; exit -2;fi           
-          if [ ! -d "/var/log/atop/atp_*" ]; then echo "assert: logfile_check /var/log/atp" ; exit -1;fi  
+          file_t="/var/log/atop/atop_"$(date +%Y%m%d)
+          echo file_t
+          if [ ! -d $file_t ]; then echo "assert: logfile_check/var/log/atop/atop_$(date +%Y%m%d)" ; exit -2;fi           
+          if [ ! -d "/var/log/atop/atp" ]; then echo "assert: logfile_check /var/log/atp" ; exit -1;fi  
