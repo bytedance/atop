@@ -39,7 +39,7 @@ jobs:
           ls -l /var/log/atop/
           if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi      
           if test -z "$(ls -l /var/log/atop/)"; then echo "assert: logfile_check error/var/log/atop/ "; exit -2; fi 
-          rm /var/log/atop/atop_*
+          sudo rm /var/log/atop/atop_*
           ls -l /var/log/atop/
           if test -z "$(ls -l /var/log/atop/)"; then echo "assert: logfile_check error /var/log/atp/ "; exit -3; fi 
           
