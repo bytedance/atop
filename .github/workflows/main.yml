@@ -30,14 +30,14 @@ jobs:
       - name: shadowfile_check
         id: step_three
         run: |
-          if [! -d /run/pacct_shadow.d/ ]; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit -1;fi
+          if [ ! -d /run/pacct_shadow.d/ ]; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit -1;fi
           if test -z "$(sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atopacctd.paf_check error "; exit -2;fi
           if test -z "$(sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atop.paf_check error "; exit -3;fi
-          if test -z "$(sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat')"; then echo "assert: atop.paf_check error ";exit -3;fi
+          if test -z "$(sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.pat')"; then echo "assert: atop.pat_check error ";exit -3;fi
       - name: logfile_check
         id: step_four
         run: |
           ls -l /var/log/atop/
           if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi
-          if [ ! -d "/var/log/atop/atop_$(date +%Y%m%d)" ]; then echo "assert: logfile_check/var/log/atop/atop_$(date +%Y%m%d)" ; exit -2;fi           
-          if [ ! -d "/var/log/atop/atp_*" ]; then echo "assert: logfile_check /var/log/atop" ; exit -1;fi  
+          if [ ! -d "/var/log/atop/atop_*" ]; then echo "assert: logfile_check/var/log/atop/atop_$(date +%Y%m%d)" ; exit -2;fi           
+          if [ ! -d "/var/log/atop/atp_*" ]; then echo "assert: logfile_check /var/log/atp" ; exit -1;fi  
