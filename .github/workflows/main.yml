@@ -25,9 +25,9 @@ jobs:
           systemctl cat atop.service
           systemctl cat atopacct.service
           systemctl cat atop-rotate.timer
-          systemctl stop atop.service 
+          sudo systemctl stop atop.service 
           systemctl status atop.service 
-          systemctl restart atop.service 
+          sudo systemctl restart atop.service 
           if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
           if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
       - name: shadowfile_check
