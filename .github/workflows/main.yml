@@ -25,18 +25,16 @@ jobs:
           systemctl cat atop.service
           systemctl cat atopacct.service
           systemctl cat atop-rotate.timer
-          sudo systemctl stop atop.service 
-          sudo systemctl restart atop.service 
-          pwd
-          systemctl status atop.service 
-          ls
-          systemctl status atp.service 
           if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
           if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
+          sudo systemctl stop atopacct.service && sudo systemctl restart atop && sleep 10
+          sudo systemctl restart atopacct
+          if [ ! -d /var/cache/atop.d/atop.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
+          if [ ! -d /var/cache/atop.d/atp.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
       - name: shadowfile_check
         id: step_three
         run: |
-          if [ ! -d /run/pacct_shadow.d/ ]; then echo "assert: shadowfile_check error ";ls -A /run/pacct_shadow.d/; exit -1;fi
+          if [ ! -d /run/pacct_shadow.d/ ]; then echo "assert: shadowfile_check error "; exit -1;fi
           if test -z "$(sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atopacctd.paf_check error "; exit -2;fi
           if test -z "$(sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atop.paf_check error "; exit -3;fi
       - name: logfile_check
