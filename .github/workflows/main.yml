@@ -54,6 +54,8 @@ jobs:
       - name: memleak
         run: |  
           sudo apt-get install valgrind
+          atop -V
+          ls /usr/bin/atop
           echo $(valgrind --tool=memcheck  --leak-check=full --log-file=temp_valgrind.log atop) > atop.log
           cat temp_valgrind.log
           grep --color=auto -rns "definitely lost: 0 bytes in 0 blocks" temp_valgrind.log
