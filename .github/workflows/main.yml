@@ -51,4 +51,11 @@ jobs:
           pwd
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($3);}') > 5" |bc` -eq 1 ]; then echo "atop cpu > 5%"; exit -1;fi
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($4);}') > 5" |bc` -eq 1 ]; then echo "atop mem > 5%"; exit -1;fi
-          
+      - name: memleak
+        run: |  
+          sudo apt-get install valgrin
+          echo $(valgrind --tool=memcheck  --leak-check=full --log-file=temp_valgrind.log atop) > atop.log
+          cat temp_valgrind.log
+          grep --color=auto -rns "definitely lost: 0 bytes in 0 blocks" temp_valgrind.log
+          grep --color=auto -rns "indirectly lost: 0 bytes in 0 blocks" temp_valgrind.log
+          grep --color=auto -rns "possibly lost: 0 bytes in 0 blocks" temp_valgrind.log
