@@ -30,7 +30,6 @@ jobs:
           sudo systemctl stop atopacct.service && sudo systemctl restart atop && sleep 10
           sudo systemctl restart atopacct
           if [ ! -d /var/cache/atop.d/atop.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
-          if [ ! -d /var/cache/atop.d/atp.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
       - name: shadowfile_check
         id: step_three
         run: |
