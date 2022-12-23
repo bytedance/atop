@@ -57,6 +57,7 @@ jobs:
           sudo valgrind --tool=memcheck  --leak-check=full --log-file=temp_valgrind.log /usr/bin/atop > atop.log & 
           sleep 10
           kill -9 $(ps aux | grep valgrind | head -n 1 | awk '{print($2);}')
+          ls
           cat temp_valgrind.log
           grep --color=auto -rns "definitely lost: 0 bytes in 0 blocks" temp_valgrind.log
           grep --color=auto -rns "indirectly lost: 0 bytes in 0 blocks" temp_valgrind.log
