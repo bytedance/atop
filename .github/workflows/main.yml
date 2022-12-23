@@ -22,8 +22,6 @@ jobs:
       - name: install
         id: step_three
         run: |
-          sudo make && sudo make install
-          echo '安装完成'     
           systemctl status atop.service 
           systemctl status atopacct.service
           systemctl status atop-rotate.timer
