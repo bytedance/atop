@@ -19,7 +19,7 @@ jobs:
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
-      - name: install
+      - name: test
         id: step_three
         run: |
           systemctl status atop.service 
@@ -33,7 +33,7 @@ jobs:
           sudo systemctl stop atopacct.service && sudo systemctl restart atop && sleep 10
           sudo systemctl restart atopacct
           sudo ls -l /var/cache/atop.d/atop.acct
-          if [ ! -d /var/cache/atop.d/atop.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
+          if test -z "$(sudo ls -l /var/cache/atop.d/atop.acct)"; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -3;fi
       - name: shadowfile_check
         id: step_four
         run: |
