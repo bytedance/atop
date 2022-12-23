@@ -22,7 +22,6 @@ jobs:
       - name: install
         id: step_three
         run: |
-          if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'     
           systemctl status atop.service 
@@ -31,11 +30,11 @@ jobs:
           systemctl cat atop.service
           systemctl cat atopacct.service
           systemctl cat atop-rotate.timer
-          if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit;fi
-          if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
+          if ! atop -V |grep -i Version; then echo "assert: atop -V error ";  atop -V; exit -1;fi
+          if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit -2;fi
           sudo systemctl stop atopacct.service && sudo systemctl restart atop && sleep 10
           sudo systemctl restart atopacct
-          ls /var/cache/atop.d/atop.acct
+          ls -l /var/cache/atop.d/atop.acct
           if [ ! -d /var/cache/atop.d/atop.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
       - name: shadowfile_check
         id: step_four
