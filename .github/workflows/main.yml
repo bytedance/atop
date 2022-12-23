@@ -19,6 +19,12 @@ jobs:
           if atop -V ; then echo "assert: atop have installed "; exit;fi
           sudo make && sudo make install
           echo '安装完成'
+      - name: install
+        id: step_three
+        run: |
+          if atop -V ; then echo "assert: atop have installed "; exit;fi
+          sudo make && sudo make install
+          echo '安装完成'     
           systemctl status atop.service 
           systemctl status atopacct.service
           systemctl status atop-rotate.timer
@@ -29,21 +35,21 @@ jobs:
           if ! atop -h |grep -i Usage; then echo "assert: atop -h error "; atop -h; exit;fi
           sudo systemctl stop atopacct.service && sudo systemctl restart atop && sleep 10
           sudo systemctl restart atopacct
+          ls /var/cache/atop.d/atop.acct
           if [ ! -d /var/cache/atop.d/atop.acct ]; then echo "assert: /var/cache/atop.d/atop.acct_check error "; exit -1;fi
       - name: shadowfile_check
-        id: step_three
+        id: step_four
         run: |
           if [ ! -d /run/pacct_shadow.d/ ]; then echo "assert: shadowfile_check error "; exit -1;fi
           if test -z "$(sudo ls -l /proc/$(pidof atopacctd)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atopacctd.paf_check error "; exit -2;fi
           if test -z "$(sudo ls -l /proc/$(pidof atop)/fd|grep pacct_shadow|grep '.paf')"; then echo "assert: atop.paf_check error "; exit -3;fi
       - name: logfile_check
-        id: step_four
+        id: step_five
         run: |
           ls -l /var/log/atop/
           if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi      
           if test -z "$(ls -l /var/log/atop/)"; then echo "assert: logfile_check error/var/log/atop/atop_$(date +%Y%m%d) "; exit -2; fi
       - name: performance
-        id: step_five
         run: | 
           pwd
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($3);}') > 5" |bc` -eq 1 ]; then echo "atop cpu > 5%"; exit -1;fi
