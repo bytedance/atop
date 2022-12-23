@@ -42,5 +42,11 @@ jobs:
         run: |
           ls -l /var/log/atop/
           if [ ! -d "/var/log/atop/" ]; then echo "assert: logfile_check_/var/log/atop error" ; exit -1;fi      
-          if test -z "$(ls -l /var/log/atop/)"; then echo "assert: logfile_check error/var/log/atop/atop_$(date +%Y%m%d) "; exit -2; fi 
+          if test -z "$(ls -l /var/log/atop/)"; then echo "assert: logfile_check error/var/log/atop/atop_$(date +%Y%m%d) "; exit -2; fi
+      - name: performance
+        id: step_five
+        run: | 
+          pwd
+          if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($3);}') > 5" |bc` -eq 1 ]; then echo "atop cpu > 5%"; exit -1;fi
+          if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($4);}') > 5" |bc` -eq 1 ]; then echo "atop mem > 5%"; exit -1;fi
           
