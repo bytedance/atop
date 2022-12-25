@@ -60,7 +60,7 @@ jobs:
           echo "sleep done"
           ps -aux |grep "valgrind"
           ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1
-          sudo kill -9 $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
+          kill $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
           sudo kill -9 $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
           sleep 10
           ps -aux |grep "valgrind"
