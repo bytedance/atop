@@ -64,7 +64,9 @@ jobs:
           echo "free $free"
           kill -9 $(ps -C atop| awk '{print $1}' | tail -n 1)
           cat mem_t
-          sed -i '1d' mem_t
+          sed -i '2d' mem_t
+          sed -i '-1d' mem_t
+          cat mem_t
           for line in `cat mem_t | awk '{print $7}'`
           do
             line=${line::-1}
