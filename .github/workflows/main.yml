@@ -60,7 +60,7 @@ jobs:
           ./.github/mem&
           (atop | grep MEM &) >> mem_t
           sleep 11
-          free=$(free -m | grep Mem | awk '{print  $4}')
+          free=$(free -g | grep Mem | awk '{print  $4}')
           echo "free $free"
           kill -9 $(ps -C atop| awk '{print $1}' | tail -n 1)
           cat mem_t
