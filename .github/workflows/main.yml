@@ -55,8 +55,9 @@ jobs:
         run: | 
           free=$(free -m | grep Mem | awk '{print  $4}')
           echo "free $free"
-          gcc atop/.github/mem.c -o atop/.github/mem
-          atop/.github/mem&
+          ls
+          gcc .github/mem.c -o .github/mem
+          ./.github/mem&
           (atop | grep MEM &) >> mem_t
           sleep 11
           free=$(free -m | grep Mem | awk '{print  $4}')
