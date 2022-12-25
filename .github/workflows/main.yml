@@ -51,6 +51,30 @@ jobs:
           pwd
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($3);}') > 5" |bc` -eq 1 ]; then echo "atop cpu > 5%"; exit -1;fi
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($4);}') > 5" |bc` -eq 1 ]; then echo "atop mem > 5%"; exit -1;fi
+      - name: mem
+        run: | 
+          free=$(free -m | grep Mem | awk '{print  $4}')
+          echo "free $free"
+          gcc atop/.github/mem.c -o atop/.github/mem
+          atop/.github/mem&
+          (atop | grep MEM &) >> mem_t
+          sleep 11
+          free=$(free -m | grep Mem | awk '{print  $4}')
+          echo "free $free"
+          kill -9 $(ps -C atop| awk '{print $1}' | tail -n 1)
+          cat mem_t
+          sed -i '1d' mem_t
+          for line in `cat mem_t | awk '{print $7}'`
+          do
+            line=${line::-1}
+            echo "atop-free $line"
+            if [ `echo "$line > $free-10" | bc` -eq 1 ]  && [ `echo "$line < $free+10" | bc` -eq 1 ]
+            then
+              echo "memory checks success"
+            else
+              echo "memory checks fail"
+            fi
+          done
       - name: memleak
         run: |  
           sudo apt-get install valgrind
