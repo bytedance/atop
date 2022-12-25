@@ -69,7 +69,7 @@ jobs:
           do
             line=${line::-1}
             echo "atop-free $line"
-            if [ `echo "$line > $free-1" | bc` -eq 1 ]  && [ `echo "$line < $free+1" | bc` -eq 1 ]
+            if [ `echo "$line > $free" | bc` -eq 1 ]  && [ `echo "$line < $free" | bc` -eq 1 ]
             then
               echo "memory checks success"
             else
