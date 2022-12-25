@@ -60,7 +60,7 @@ jobs:
           echo "sleep done"
           ps -aux |grep "valgrind"
           ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1
-          sudo kill $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
+          sudo kill -9 $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
           ps -aux |grep "valgrind"
           cat temp_valgrind.log
           grep --color=auto -rns "definitely lost: 0 bytes in 0 blocks" temp_valgrind.log
