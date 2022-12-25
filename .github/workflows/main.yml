@@ -55,7 +55,9 @@ jobs:
         run: |  
           sudo apt-get install valgrind
           sudo valgrind --tool=memcheck  --leak-check=full --log-file=temp_valgrind.log ./atop > atop.log & 
+          echo "sleep start"
           sleep 20
+          echo "sleep done"
           kill $(ps -aux |grep "valgrind"| awk '{print $2}' | head -n 1)
           cat temp_valgrind.log
           grep --color=auto -rns "definitely lost: 0 bytes in 0 blocks" temp_valgrind.log
