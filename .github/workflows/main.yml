@@ -79,8 +79,8 @@ jobs:
           done
       - name: mem
         run: | 
-          gcc /root/atop/gitlab-ci-sh/cpu_100.c -o /root/atop/gitlab-ci-sh/cpu_100
-          /root/atop/gitlab-ci-sh/cpu_100 &
+          gcc .github/cpu_100.c -o .github/cpu_100
+          ./.github/cpu_100 &
           sleep 5
           (atop | grep cpu_100 &) >> t
           sleep 31
