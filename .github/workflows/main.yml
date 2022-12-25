@@ -77,6 +77,24 @@ jobs:
               exit -1;
             fi
           done
+      - name: mem
+        run: | 
+          gcc /root/atop/gitlab-ci-sh/cpu_100.c -o /root/atop/gitlab-ci-sh/cpu_100
+          /root/atop/gitlab-ci-sh/cpu_100 &
+          sleep 5
+          (atop | grep cpu_100 &) >> t
+          sleep 31
+          ps aux | grep atop
+          kill -9 $(ps -C atop| awk '{print $1}' | tail -n 1)
+          ps aux | grep atop
+          sleep 3
+          cat t
+          pkill -9 cpu_100
+          num1=$(sed -n '/100%/'p t | wc -l)
+          echo $num1
+          num2=$(cat t | wc -l)
+          echo $num2
+          if (( $num1 < $num2-2 )); then echo 'cpu 100% atop test fail'; exit -1;fi
       - name: memleak
         run: |  
           sudo apt-get install valgrind
