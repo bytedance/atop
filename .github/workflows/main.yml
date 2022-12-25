@@ -69,11 +69,12 @@ jobs:
           do
             line=${line::-1}
             echo "atop-free $line"
-            if [ `echo "$line > $free-10" | bc` -eq 1 ]  && [ `echo "$line < $free+10" | bc` -eq 1 ]
+            if [ `echo "$line > $free-1" | bc` -eq 1 ]  && [ `echo "$line < $free+1" | bc` -eq 1 ]
             then
               echo "memory checks success"
             else
               echo "memory checks fail"
+              exit -1;
             fi
           done
       - name: memleak
