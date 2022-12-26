@@ -51,6 +51,20 @@ jobs:
           pwd
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($3);}') > 5" |bc` -eq 1 ]; then echo "atop cpu > 5%"; exit -1;fi
           if [ `echo "$(ps aux | grep /usr/bin/atop | head -n 1 | awk '{print($4);}') > 5" |bc` -eq 1 ]; then echo "atop mem > 5%"; exit -1;fi
+      - name: cmp_version
+        run: |
+          version1=$(atop -V)
+          echo $version1
+          version1=${version1:9:5}
+          echo $version1
+          version2=$( cat /root/atop/version.h | awk '{print($3);}')
+          echo $version2
+          version2=${version2:1:5}
+          echo $version2
+          if [ "$version1" != "$version2" ];then
+            echo "version error: version_deb != atop --version";
+            exit -1;
+          fi
       - name: mem
         run: | 
           free=$(free -m | grep Mem | awk '{print  $4}')
@@ -77,7 +91,7 @@ jobs:
               exit -1;
             fi
           done
-      - name: mem
+      - name: cpu
         run: | 
           gcc .github/cpu_100.c -o .github/cpu_100
           ./.github/cpu_100 &
