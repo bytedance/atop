@@ -57,12 +57,12 @@ jobs:
           echo $version1
           version1=${version1:9:5}
           echo $version1
-          version2=$( cat /root/atop/version.h | awk '{print($3);}')
+          version2=$( cat ./version.h | awk '{print($3);}')
           echo $version2
           version2=${version2:1:5}
           echo $version2
           if [ "$version1" != "$version2" ];then
-            echo "version error: version_deb != atop --version";
+            echo "version error: version.h != atop -V";
             exit -1;
           fi
       - name: mem
